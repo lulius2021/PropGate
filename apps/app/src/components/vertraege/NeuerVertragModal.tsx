@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { trpc } from "@/lib/trpc/client";
+import { ErweiterterMieterModal } from "@/components/mieter/ErweiterterMieterModal";
+import { DokumentUploadModal } from "@/components/dokumente/DokumentUploadModal";
 
 interface NeuerVertragModalProps {
   isOpen: boolean;
@@ -20,7 +22,11 @@ export function NeuerVertragModal({ isOpen, onClose, onSuccess, defaultEinheitId
     hkVorauszahlung: "",
     kaution: "",
     notizen: "",
+    vertragsart: "UNBEFRISTET" as "UNBEFRISTET" | "BEFRISTET" | "UNTERMIETE" | "GEWERBE" | "STAFFELMIETE" | "INDEXMIETE",
+    auszugsdatum: "",
   });
+  const [showMieterModal, setShowMieterModal] = useState(false);
+  const [showDokUpload, setShowDokUpload] = useState(false);
 
   const { data: mieter } = trpc.mieter.list.useQuery();
   const { data: einheiten } = trpc.einheiten.list.useQuery({});
@@ -41,6 +47,8 @@ export function NeuerVertragModal({ isOpen, onClose, onSuccess, defaultEinheitId
         hkVorauszahlung: "",
         kaution: "",
         notizen: "",
+        vertragsart: "UNBEFRISTET",
+        auszugsdatum: "",
       });
       onSuccess();
       onClose();
@@ -68,6 +76,8 @@ export function NeuerVertragModal({ isOpen, onClose, onSuccess, defaultEinheitId
       hkVorauszahlung: parseFloat(formData.hkVorauszahlung) || 0,
       kaution: formData.kaution ? parseFloat(formData.kaution) : undefined,
       notizen: formData.notizen || undefined,
+      vertragsart: formData.vertragsart,
+      auszugsdatum: formData.auszugsdatum ? new Date(formData.auszugsdatum) : undefined,
     });
   };
 
@@ -110,6 +120,13 @@ export function NeuerVertragModal({ isOpen, onClose, onSuccess, defaultEinheitId
                 </option>
               ))}
             </select>
+            <button
+              type="button"
+              onClick={() => setShowMieterModal(true)}
+              className="mt-1 text-xs text-blue-400 hover:text-blue-300 font-medium"
+            >
+              Oder: Neuen Mieter anlegen
+            </button>
             {mieter?.length === 0 && (
               <p className="mt-1 text-xs text-amber-600">
                 Keine Mieter vorhanden. Bitte zuerst unter "Mieter" einen Mieter anlegen.
@@ -155,19 +172,58 @@ export function NeuerVertragModal({ isOpen, onClose, onSuccess, defaultEinheitId
             </div>
           )}
 
-          {/* Einzugsdatum */}
-          <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-              Einzugsdatum <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="date"
-              required
-              value={formData.einzugsdatum}
-              onChange={(e) => setFormData({ ...formData, einzugsdatum: e.target.value })}
-              className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-page)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            />
+          {/* Vertragsart + Einzugsdatum */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                Vertragsart
+              </label>
+              <select
+                value={formData.vertragsart}
+                onChange={(e) => setFormData({ ...formData, vertragsart: e.target.value as typeof formData.vertragsart })}
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-page)] text-[var(--text-primary)] px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                <optgroup label="Wohnmietvertrag">
+                  <option value="UNBEFRISTET">Unbefristet</option>
+                  <option value="BEFRISTET">Befristet</option>
+                  <option value="STAFFELMIETE">Staffelmiete</option>
+                  <option value="INDEXMIETE">Indexmiete</option>
+                </optgroup>
+                <optgroup label="Sonstige">
+                  <option value="GEWERBE">Gewerbemietvertrag</option>
+                  <option value="UNTERMIETE">Untermiete</option>
+                </optgroup>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                Einzugsdatum <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="date"
+                required
+                value={formData.einzugsdatum}
+                onChange={(e) => setFormData({ ...formData, einzugsdatum: e.target.value })}
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-page)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
           </div>
+
+          {/* Auszugsdatum (bei Befristet oder Gewerbe) */}
+          {(formData.vertragsart === "BEFRISTET" || formData.vertragsart === "GEWERBE") && (
+            <div>
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                Auszugsdatum <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="date"
+                required
+                value={formData.auszugsdatum}
+                onChange={(e) => setFormData({ ...formData, auszugsdatum: e.target.value })}
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-page)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+          )}
 
           {/* Miete */}
           <div>
@@ -184,6 +240,7 @@ export function NeuerVertragModal({ isOpen, onClose, onSuccess, defaultEinheitId
                   step="0.01"
                   value={formData.kaltmiete}
                   onChange={(e) => setFormData({ ...formData, kaltmiete: e.target.value })}
+                  onBlur={(e) => { const v = parseFloat(e.target.value); if (!isNaN(v)) setFormData((d) => ({ ...d, kaltmiete: v.toString() })); }}
                   onFocus={(e) => e.target.select()}
                   placeholder="800.00"
                   className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-page)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -199,6 +256,7 @@ export function NeuerVertragModal({ isOpen, onClose, onSuccess, defaultEinheitId
                   step="0.01"
                   value={formData.bkVorauszahlung}
                   onChange={(e) => setFormData({ ...formData, bkVorauszahlung: e.target.value })}
+                  onBlur={(e) => { const v = parseFloat(e.target.value); if (!isNaN(v)) setFormData((d) => ({ ...d, bkVorauszahlung: v.toString() })); }}
                   onFocus={(e) => e.target.select()}
                   placeholder="150.00"
                   className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-page)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -214,6 +272,7 @@ export function NeuerVertragModal({ isOpen, onClose, onSuccess, defaultEinheitId
                   step="0.01"
                   value={formData.hkVorauszahlung}
                   onChange={(e) => setFormData({ ...formData, hkVorauszahlung: e.target.value })}
+                  onBlur={(e) => { const v = parseFloat(e.target.value); if (!isNaN(v)) setFormData((d) => ({ ...d, hkVorauszahlung: v.toString() })); }}
                   onFocus={(e) => e.target.select()}
                   placeholder="80.00"
                   className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-page)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -246,6 +305,7 @@ export function NeuerVertragModal({ isOpen, onClose, onSuccess, defaultEinheitId
               step="0.01"
               value={formData.kaution}
               onChange={(e) => setFormData({ ...formData, kaution: e.target.value })}
+              onBlur={(e) => { const v = parseFloat(e.target.value); if (!isNaN(v)) setFormData((d) => ({ ...d, kaution: v.toString() })); }}
               onFocus={(e) => e.target.select()}
               placeholder="z.B. 2400.00 (= 3 × Kaltmiete)"
               className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-page)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -273,6 +333,20 @@ export function NeuerVertragModal({ isOpen, onClose, onSuccess, defaultEinheitId
               placeholder="Besondere Vereinbarungen, Hinweise..."
               className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-page)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
+          </div>
+
+          {/* Dokument-Upload */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setShowDokUpload(true)}
+              className="text-sm text-blue-400 hover:text-blue-300 font-medium flex items-center gap-1.5"
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+              Dokumente hochladen
+            </button>
           </div>
 
           <div className="rounded-lg bg-blue-500/10 border border-blue-500/20 px-4 py-3">
@@ -318,6 +392,22 @@ export function NeuerVertragModal({ isOpen, onClose, onSuccess, defaultEinheitId
           </div>
         </form>
       </div>
+
+      {/* Neuen Mieter anlegen */}
+      <ErweiterterMieterModal
+        isOpen={showMieterModal}
+        onClose={() => setShowMieterModal(false)}
+        onSuccess={() => {
+          utils.mieter.list.invalidate();
+          setShowMieterModal(false);
+        }}
+      />
+
+      {/* Dokument hochladen */}
+      <DokumentUploadModal
+        open={showDokUpload}
+        onClose={() => setShowDokUpload(false)}
+      />
     </div>
   );
 }

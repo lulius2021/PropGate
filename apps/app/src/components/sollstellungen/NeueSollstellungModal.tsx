@@ -142,6 +142,7 @@ export default function NeueSollstellungModal({ open, onClose, onSuccess }: Prop
               step="0.01"
               value={formData.betragGesamt}
               onChange={(e) => setFormData({ ...formData, betragGesamt: e.target.value })}
+              onBlur={(e) => { const v = parseFloat(e.target.value); if (!isNaN(v)) setFormData((d) => ({ ...d, betragGesamt: v.toString() })); }}
               placeholder="z.B. 850.00"
               className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-page)] px-4 py-2 text-sm text-[var(--text-primary)] focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />

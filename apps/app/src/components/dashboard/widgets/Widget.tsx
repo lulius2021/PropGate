@@ -152,6 +152,10 @@ export function Widget({ type, size, data, isLoading }: WidgetProps) {
   const [showNeueEinheit, setShowNeueEinheit] = useState(false);
   const [showNeuerMieter, setShowNeuerMieter] = useState(false);
   const [showDokumentUpload, setShowDokumentUpload] = useState(false);
+  const [chartJahr, setChartJahr] = useState(new Date().getFullYear());
+  const [chartZeitraum, setChartZeitraum] = useState<"jahr" | "Q1" | "Q2" | "Q3" | "Q4" | "custom">("jahr");
+  const [chartVon, setChartVon] = useState(0);   // month index 0-11
+  const [chartBis, setChartBis] = useState(11);   // month index 0-11
 
   // All statistics hooks at top level — React Rules of Hooks requires unconditional calls
   const { data: vermietungData, isLoading: vermietungLoading } = trpc.statistik.vermietung.useQuery();
@@ -163,10 +167,10 @@ export function Widget({ type, size, data, isLoading }: WidgetProps) {
   const { data: zaehlerAnalyseData, isLoading: zaehlerAnalyseLoading } = trpc.statistik.zaehlerAnalyse.useQuery();
   const { data: mieteAnalyseData, isLoading: mieteAnalyseLoading } = trpc.statistik.mieteAnalyse.useQuery();
   const { data: datenqualitaetData, isLoading: datenqualitaetLoading } = trpc.statistik.datenqualitaet.useQuery();
-  const { data: sollIstMonatlichData, isLoading: sollIstMonatlichLoading } = trpc.statistik.sollIstMonatlich.useQuery();
-  const { data: cashflowMonatlichData, isLoading: cashflowMonatlichLoading } = trpc.statistik.cashflowMonatlich.useQuery();
-  const { data: kostenMonatlichData, isLoading: kostenMonatlichLoading } = trpc.statistik.kostenMonatlich.useQuery();
-  const { data: ticketsMonatlichData, isLoading: ticketsMonatlichLoading } = trpc.statistik.ticketsMonatlich.useQuery();
+  const { data: sollIstMonatlichData, isLoading: sollIstMonatlichLoading } = trpc.statistik.sollIstMonatlich.useQuery({ jahr: chartJahr });
+  const { data: cashflowMonatlichData, isLoading: cashflowMonatlichLoading } = trpc.statistik.cashflowMonatlich.useQuery({ jahr: chartJahr });
+  const { data: kostenMonatlichData, isLoading: kostenMonatlichLoading } = trpc.statistik.kostenMonatlich.useQuery({ jahr: chartJahr });
+  const { data: ticketsMonatlichData, isLoading: ticketsMonatlichLoading } = trpc.statistik.ticketsMonatlich.useQuery({ jahr: chartJahr });
 
   // Objekte Widget
   if (type === "objekte") {
@@ -1439,19 +1443,103 @@ export function Widget({ type, size, data, isLoading }: WidgetProps) {
   }
 
   // ───────────────────────────────────────────────────────
+  // Time range selector for charts
+  // ───────────────────────────────────────────────────────
+  const currentYear = new Date().getFullYear();
+  const yearOptions = [currentYear - 2, currentYear - 1, currentYear, currentYear + 1];
+
+  const quarterRanges: Record<string, [number, number]> = {
+    Q1: [0, 2], Q2: [3, 5], Q3: [6, 8], Q4: [9, 11],
+  };
+
+  const handleZeitraumChange = (z: typeof chartZeitraum) => {
+    setChartZeitraum(z);
+    if (z === "jahr") { setChartVon(0); setChartBis(11); }
+    else if (z in quarterRanges) { const [v, b] = quarterRanges[z]; setChartVon(v); setChartBis(b); }
+  };
+
+  const monatLabels = ["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
+
+  // Filter chart data by selected range
+  const filterByZeitraum = (data: any[] | null) => {
+    if (!data) return null;
+    const now = new Date();
+    const curMonthIdx = now.getMonth();
+    return data.filter((_: any, idx: number) => {
+      const inRange = idx >= chartVon && idx <= chartBis;
+      const inPast = chartJahr < currentYear || idx <= curMonthIdx;
+      return inRange && inPast;
+    });
+  };
+
+  const ZeitraumSelector = () => (
+    <div className="flex items-center gap-1.5 flex-wrap">
+      <select
+        value={chartJahr}
+        onChange={(e) => setChartJahr(Number(e.target.value))}
+        className="rounded border border-[var(--border)] bg-[var(--bg-page)] px-1.5 py-0.5 text-xs text-[var(--text-secondary)] focus:outline-none focus:border-blue-500"
+      >
+        {yearOptions.map((y) => (
+          <option key={y} value={y}>{y}</option>
+        ))}
+      </select>
+      <div className="flex rounded border border-[var(--border)] overflow-hidden">
+        {(["jahr", "Q1", "Q2", "Q3", "Q4", "custom"] as const).map((z) => (
+          <button
+            key={z}
+            onClick={() => handleZeitraumChange(z)}
+            className={`px-1.5 py-0.5 text-[10px] font-medium transition-colors ${
+              chartZeitraum === z
+                ? "bg-blue-500/20 text-blue-400"
+                : "text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]"
+            }`}
+          >
+            {z === "jahr" ? "Jahr" : z === "custom" ? "..." : z}
+          </button>
+        ))}
+      </div>
+      {chartZeitraum === "custom" && (
+        <div className="flex items-center gap-1 text-[10px] text-[var(--text-secondary)]">
+          <select
+            value={chartVon}
+            onChange={(e) => setChartVon(Number(e.target.value))}
+            className="rounded border border-[var(--border)] bg-[var(--bg-page)] px-1 py-0.5 text-[10px] text-[var(--text-secondary)]"
+          >
+            {monatLabels.map((m, i) => <option key={i} value={i}>{m}</option>)}
+          </select>
+          <span>–</span>
+          <select
+            value={chartBis}
+            onChange={(e) => setChartBis(Number(e.target.value))}
+            className="rounded border border-[var(--border)] bg-[var(--bg-page)] px-1 py-0.5 text-[10px] text-[var(--text-secondary)]"
+          >
+            {monatLabels.map((m, i) => <option key={i} value={i}>{m}</option>)}
+          </select>
+        </div>
+      )}
+    </div>
+  );
+
+  const formatYAxis = (v: number) => {
+    if (v >= 1000) return `${(v / 1000).toFixed(v >= 10000 ? 0 : 1)}k`;
+    return v.toFixed(0);
+  };
+
+  // ───────────────────────────────────────────────────────
   // Zeitverlauf-Charts
   // ───────────────────────────────────────────────────────
 
   if (type === "sollIstVerlauf") {
-    const now = new Date();
-    const currentMonthIndex = now.getMonth();
-    const monate = sollIstMonatlichData?.filter((_: any, idx: number) => idx <= currentMonthIndex) ?? null;
+    const monate = filterByZeitraum(sollIstMonatlichData ?? null);
     const loading = sollIstMonatlichLoading;
     return (
       <div className="h-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.05)_inset] hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-shadow">
         <div className="flex h-full flex-col">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-[var(--text-secondary)]">Soll / Ist Verlauf</p>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-sm font-medium text-[var(--text-secondary)]">Soll / Ist Verlauf</p>
+              <ZeitraumSelector />
+            </div>
             <div className="flex gap-3 text-xs text-[var(--text-secondary)]">
               <span className="flex items-center gap-1">
                 <span className="inline-block h-2.5 w-2.5 rounded-full bg-blue-500" />
@@ -1468,13 +1556,14 @@ export function Widget({ type, size, data, isLoading }: WidgetProps) {
               <p className="mt-4 text-2xl font-bold text-[var(--text-primary)]">—</p>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={monate} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                <BarChart data={monate} margin={{ top: 4, right: 8, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                   <XAxis dataKey="monat" tick={{ fontSize: 10, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 10, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} tickFormatter={formatYAxis} />
                   <Tooltip
                     formatter={(v) => formatCurrency(Number(v) || 0)}
                     contentStyle={{ fontSize: 12, borderRadius: 8, background: "var(--bg-card)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
+                    labelStyle={{ color: "var(--text-secondary)" }}
                   />
                   <Bar dataKey="soll" name="Soll" fill={CHART_COLORS.blue} radius={[3, 3, 0, 0]} barSize={isSmall ? 6 : 12} animationDuration={600} />
                   <Bar dataKey="ist" name="Ist" fill={CHART_COLORS.green} radius={[3, 3, 0, 0]} barSize={isSmall ? 6 : 12} animationDuration={600} />
@@ -1488,15 +1577,20 @@ export function Widget({ type, size, data, isLoading }: WidgetProps) {
   }
 
   if (type === "cashflowVerlauf") {
-    const now = new Date();
-    const currentMonthIndex = now.getMonth();
-    const monate = cashflowMonatlichData?.filter((_: any, idx: number) => idx <= currentMonthIndex) ?? null;
+    const filteredRaw = filterByZeitraum(cashflowMonatlichData ?? null);
+    const monate = filteredRaw?.map((m: any) => {
+      const hasData = (m.einnahmen && m.einnahmen !== 0) || (m.ausgaben && m.ausgaben !== 0);
+      return hasData ? m : { ...m, einnahmen: null, ausgaben: null, cashflow: null };
+    }) ?? null;
     const loading = cashflowMonatlichLoading;
     return (
       <div className="h-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.05)_inset] hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-shadow">
         <div className="flex h-full flex-col">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-[var(--text-secondary)]">Cashflow Verlauf</p>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-sm font-medium text-[var(--text-secondary)]">Cashflow Verlauf</p>
+              <ZeitraumSelector />
+            </div>
             <div className="flex gap-3 text-xs text-[var(--text-secondary)]">
               <span className="flex items-center gap-1">
                 <span className="inline-block h-2.5 w-2.5 rounded-full bg-teal-500" />
@@ -1517,17 +1611,18 @@ export function Widget({ type, size, data, isLoading }: WidgetProps) {
               <p className="mt-4 text-2xl font-bold text-[var(--text-primary)]">—</p>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={monate} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                <LineChart data={monate} margin={{ top: 4, right: 8, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                   <XAxis dataKey="monat" tick={{ fontSize: 10, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 10, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} tickFormatter={formatYAxis} />
                   <Tooltip
                     formatter={(v) => formatCurrency(Number(v) || 0)}
                     contentStyle={{ fontSize: 12, borderRadius: 8, background: "var(--bg-card)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
+                    labelStyle={{ color: "var(--text-secondary)" }}
                   />
-                  <Line type="monotone" dataKey="einnahmen" name="Einnahmen" stroke={CHART_COLORS.green} strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} animationDuration={600} />
-                  <Line type="monotone" dataKey="ausgaben" name="Ausgaben" stroke={CHART_COLORS.red} strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} animationDuration={600} />
-                  <Line type="monotone" dataKey="cashflow" name="Cashflow" stroke={CHART_COLORS.teal} strokeWidth={2.5} dot={{ r: 3, fill: CHART_COLORS.teal }} activeDot={{ r: 5 }} animationDuration={600} />
+                  <Line type="monotone" dataKey="einnahmen" name="Einnahmen" stroke={CHART_COLORS.green} strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} animationDuration={600} connectNulls />
+                  <Line type="monotone" dataKey="ausgaben" name="Ausgaben" stroke={CHART_COLORS.red} strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} animationDuration={600} connectNulls />
+                  <Line type="monotone" dataKey="cashflow" name="Cashflow" stroke={CHART_COLORS.teal} strokeWidth={2.5} dot={{ r: 3, fill: CHART_COLORS.teal }} activeDot={{ r: 5 }} animationDuration={600} connectNulls />
                 </LineChart>
               </ResponsiveContainer>
             )}
@@ -1538,12 +1633,15 @@ export function Widget({ type, size, data, isLoading }: WidgetProps) {
   }
 
   if (type === "kostenVerlauf") {
-    const monate = kostenMonatlichData; const loading = kostenMonatlichLoading;
+    const monate = filterByZeitraum(kostenMonatlichData ?? null); const loading = kostenMonatlichLoading;
     return (
       <div className="h-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.05)_inset] hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-shadow">
         <div className="flex h-full flex-col">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-[var(--text-secondary)]">Kosten Verlauf</p>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-sm font-medium text-[var(--text-secondary)]">Kosten Verlauf</p>
+              <ZeitraumSelector />
+            </div>
             <div className="flex gap-3 text-xs text-[var(--text-secondary)]">
               <span className="flex items-center gap-1">
                 <span className="inline-block h-2.5 w-2.5 rounded-full bg-blue-500" />
@@ -1564,13 +1662,14 @@ export function Widget({ type, size, data, isLoading }: WidgetProps) {
               <p className="mt-4 text-2xl font-bold text-[var(--text-primary)]">—</p>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={monate} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                <BarChart data={monate} margin={{ top: 4, right: 8, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                   <XAxis dataKey="monat" tick={{ fontSize: 10, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 10, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} tickFormatter={formatYAxis} />
                   <Tooltip
                     formatter={(v) => formatCurrency(Number(v) || 0)}
                     contentStyle={{ fontSize: 12, borderRadius: 8, background: "var(--bg-card)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
+                    labelStyle={{ color: "var(--text-secondary)" }}
                   />
                   <Bar dataKey="bk" name="BK" stackId="a" fill={CHART_COLORS.blue} barSize={isSmall ? 8 : 16} animationDuration={600} />
                   <Bar dataKey="hk" name="HK" stackId="a" fill={CHART_COLORS.orange} barSize={isSmall ? 8 : 16} animationDuration={600} />
@@ -1585,12 +1684,15 @@ export function Widget({ type, size, data, isLoading }: WidgetProps) {
   }
 
   if (type === "ticketsVerlauf") {
-    const monate = ticketsMonatlichData; const loading = ticketsMonatlichLoading;
+    const monate = filterByZeitraum(ticketsMonatlichData ?? null); const loading = ticketsMonatlichLoading;
     return (
       <div className="h-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.05)_inset] hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-shadow">
         <div className="flex h-full flex-col">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-[var(--text-secondary)]">Tickets Verlauf</p>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-sm font-medium text-[var(--text-secondary)]">Tickets Verlauf</p>
+              <ZeitraumSelector />
+            </div>
             <div className="flex gap-3 text-xs text-[var(--text-secondary)]">
               <span className="flex items-center gap-1">
                 <span className="inline-block h-2.5 w-2.5 rounded-full bg-amber-500" />
@@ -1607,11 +1709,11 @@ export function Widget({ type, size, data, isLoading }: WidgetProps) {
               <p className="mt-4 text-2xl font-bold text-[var(--text-primary)]">—</p>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={monate} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                <LineChart data={monate} margin={{ top: 4, right: 8, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                   <XAxis dataKey="monat" tick={{ fontSize: 10, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 10, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} allowDecimals={false} />
-                  <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, background: "var(--bg-card)", border: "1px solid var(--border)", color: "var(--text-primary)" }} />
+                  <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, background: "var(--bg-card)", border: "1px solid var(--border)", color: "var(--text-primary)" }} labelStyle={{ color: "var(--text-secondary)" }} />
                   <Line type="monotone" dataKey="neu" name="Neue Tickets" stroke={CHART_COLORS.amber} strokeWidth={2.5} dot={{ r: 4, fill: CHART_COLORS.amber }} activeDot={{ r: 6 }} animationDuration={600} />
                   <Line type="monotone" dataKey="abgeschlossen" name="Abgeschlossen" stroke={CHART_COLORS.green} strokeWidth={2} strokeDasharray="5 5" dot={{ r: 3, fill: CHART_COLORS.green }} activeDot={{ r: 5 }} animationDuration={600} />
                 </LineChart>

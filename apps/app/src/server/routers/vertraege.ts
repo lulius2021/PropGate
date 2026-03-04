@@ -58,6 +58,8 @@ export const vertraegeRouter = router({
         hkVorauszahlung: z.number().nonnegative(),
         kaution: z.number().optional(),
         notizen: z.string().optional(),
+        vertragsart: z.enum(["UNBEFRISTET", "BEFRISTET", "UNTERMIETE", "STAFFELMIETE", "INDEXMIETE", "GEWERBE"]).optional(),
+        auszugsdatum: z.date().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {

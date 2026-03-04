@@ -10,7 +10,6 @@ import {
   Building2,
   DoorOpen,
   Users,
-  FileText,
   Receipt,
   Landmark,
   AlertTriangle,
@@ -35,7 +34,6 @@ const navGroups = [
       { name: "Objekte", href: "/objekte", icon: Building2 },
       { name: "Einheiten", href: "/einheiten", icon: DoorOpen },
       { name: "Mieter", href: "/mieter", icon: Users },
-      { name: "Verträge", href: "/vertraege", icon: FileText },
     ],
   },
   {

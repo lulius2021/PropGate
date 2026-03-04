@@ -3,6 +3,7 @@
 import { trpc } from "@/lib/trpc/client";
 import { Building2, Plus, Pencil, Search } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { NeueEinheitModal } from "@/components/einheiten/NeueEinheitModal";
 import { EinheitBearbeitenModal } from "@/components/einheiten/EinheitBearbeitenModal";
 
@@ -21,11 +22,13 @@ type Einheit = {
   mietverhaeltnisse?: {
     id: string;
     kaltmiete: any;
+    einzugsdatum?: any;
     auszugsdatum?: any;
   }[];
 };
 
 export default function EinheitenPage() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedObjekte, setSelectedObjekte] = useState<string[]>([]);
@@ -88,13 +91,21 @@ export default function EinheitenPage() {
     }
   };
 
-  const getStatusLabel = (status: string) => {
+  const getStatusLabel = (status: string, einheit?: Einheit) => {
+    const fmt = (d: any) => d ? new Date(d).toLocaleDateString("de-DE") : "";
+    const mv = einheit?.mietverhaeltnisse?.[0];
     switch (status) {
       case "VERMIETET": return "Vermietet";
       case "VERFUEGBAR": return "Verfügbar";
-      case "KUENDIGUNG": return "Kündigung";
+      case "KUENDIGUNG": {
+        const aus = mv?.auszugsdatum ? fmt(mv.auszugsdatum) : "";
+        return aus ? `Gekündigt — bis ${aus}` : "Kündigung";
+      }
       case "SANIERUNG": return "Sanierung";
-      case "RESERVIERT": return "Reserviert";
+      case "RESERVIERT": {
+        const ein = mv?.einzugsdatum ? fmt(mv.einzugsdatum) : "";
+        return ein ? `Reserviert — ab ${ein}` : "Reserviert";
+      }
       default: return status;
     }
   };
@@ -249,7 +260,7 @@ export default function EinheitenPage() {
                   </p>
                 </div>
                 <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(einheit.status)}`}>
-                  {getStatusLabel(einheit.status)}
+                  {getStatusLabel(einheit.status, einheit as Einheit)}
                 </span>
               </div>
               <div className="space-y-2 text-sm">
@@ -303,6 +314,14 @@ export default function EinheitenPage() {
                   <Pencil className="h-3.5 w-3.5" />
                   Bearbeiten
                 </button>
+                {einheit.status === "VERMIETET" && (
+                  <button
+                    onClick={() => router.push("/vertraege")}
+                    className="flex items-center gap-1.5 rounded-md border border-yellow-500/30 bg-yellow-500/10 px-3 py-2 text-sm font-medium text-yellow-400 hover:bg-yellow-500/20"
+                  >
+                    Kündigung
+                  </button>
+                )}
               </div>
             </div>
           </div>

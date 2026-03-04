@@ -158,6 +158,7 @@ export function NeueEinheitModal({
                 step="0.01"
                 value={formData.flaeche}
                 onChange={(e) => setFormData({ ...formData, flaeche: e.target.value })}
+                onBlur={(e) => { const v = parseFloat(e.target.value); if (!isNaN(v)) setFormData((d) => ({ ...d, flaeche: v.toString() })); }}
                 onFocus={(e) => e.target.select()}
                 placeholder="z.B. 68.50"
                 className={inputCls}
@@ -175,6 +176,7 @@ export function NeueEinheitModal({
                 step="1"
                 value={formData.zimmer}
                 onChange={(e) => setFormData({ ...formData, zimmer: e.target.value })}
+                onBlur={(e) => { const v = parseInt(e.target.value); if (!isNaN(v)) setFormData((d) => ({ ...d, zimmer: v.toString() })); }}
                 onFocus={(e) => e.target.select()}
                 placeholder="z.B. 3"
                 className={inputCls}

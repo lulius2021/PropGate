@@ -181,7 +181,7 @@ export default function TicketsPage() {
       case "BEAUFTRAGT":
         return "bg-purple-500/15 text-purple-400";
       case "TERMIN_VEREINBART":
-        return "bg-indigo-100 text-indigo-800";
+        return "bg-indigo-500/15 text-indigo-400";
       case "IN_ARBEIT":
         return "bg-blue-500/15 text-blue-400";
       case "RUECKFRAGE":
