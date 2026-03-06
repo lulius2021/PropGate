@@ -5,11 +5,25 @@
   "type": "module",
   "exports": {
     "./types": "./src/types/index.ts",
-    "./utils": "./src/utils/index.ts"
+    "./utils": "./src/utils/index.ts",
+    "./schemas": "./src/schemas/index.ts",
+    "./schemas/auth": "./src/schemas/auth.ts",
+    "./schemas/property": "./src/schemas/property.ts",
+    "./schemas/unit": "./src/schemas/unit.ts",
+    "./schemas/person": "./src/schemas/person.ts",
+    "./schemas/contract": "./src/schemas/contract.ts",
+    "./schemas/ticket": "./src/schemas/ticket.ts",
+    "./schemas/document": "./src/schemas/document.ts",
+    "./schemas/finance": "./src/schemas/finance.ts",
+    "./schemas/meter": "./src/schemas/meter.ts",
+    "./schemas/common": "./src/schemas/common.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "typescript": "^5.7.2"
