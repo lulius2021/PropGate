@@ -3,6 +3,7 @@ import { hash } from "bcryptjs";
 import { db } from "@/lib/db";
 import { validatePassword } from "@/lib/password-policy";
 import { PLAN_LIMITS, type PlanName } from "@/lib/plan-config";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const REFERRAL_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // ohne 0,O,1,I,L
 
@@ -31,6 +32,15 @@ function isPaidPlan(plan: string): plan is PaidPlanId {
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const { allowed, resetIn } = checkRateLimit(`register:${ip}`, 5, 15 * 60 * 1000);
+    if (!allowed) {
+      return NextResponse.json(
+        { error: `Zu viele Anfragen. Versuchen Sie es in ${resetIn} Sekunden erneut.` },
+        { status: 429 }
+      );
+    }
+
     const { name, company, phone: _phone, email, password, plan, billing, referralCode } =
       await req.json();
 
@@ -46,7 +56,7 @@ export async function POST(req: NextRequest) {
     const existing = await db.user.findFirst({ where: { email } });
     if (existing) {
       return NextResponse.json(
-        { error: "Diese E-Mail-Adresse wird bereits verwendet" },
+        { error: "Registrierung fehlgeschlagen. Bitte überprüfen Sie Ihre Eingaben oder versuchen Sie es mit einer anderen E-Mail." },
         { status: 400 }
       );
     }

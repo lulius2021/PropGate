@@ -103,7 +103,7 @@ export default function TicketsPage() {
 
   // Form Hook
   const form = useForm<CreateTicketInput>({
-    resolver: zodResolver(createTicketSchema),
+    resolver: zodResolver(createTicketSchema as any),
     defaultValues: {
       titel: "",
       beschreibung: "",

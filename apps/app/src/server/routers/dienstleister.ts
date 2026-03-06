@@ -3,7 +3,7 @@
  * CRUD operations for service providers
  */
 
-import { router, protectedProcedure } from "../trpc";
+import { router, protectedProcedure, writeProcedure } from "../trpc";
 import { z } from "zod";
 import { logAudit } from "../middleware/audit";
 
@@ -18,7 +18,7 @@ export const dienstleisterRouter = router({
       });
     }),
 
-  create: protectedProcedure
+  create: writeProcedure
     .input(
       z.object({
         name: z.string().min(1),
@@ -43,7 +43,7 @@ export const dienstleisterRouter = router({
       return d;
     }),
 
-  update: protectedProcedure
+  update: writeProcedure
     .input(
       z.object({
         id: z.string(),
@@ -71,7 +71,7 @@ export const dienstleisterRouter = router({
       return d;
     }),
 
-  delete: protectedProcedure
+  delete: writeProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       await ctx.db.dienstleister.delete({

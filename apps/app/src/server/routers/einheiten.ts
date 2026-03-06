@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, protectedProcedure } from "../trpc";
+import { router, protectedProcedure, writeProcedure } from "../trpc";
 import { logAudit } from "../middleware/audit";
 import { Decimal } from "@prisma/client/runtime/library";
 
@@ -88,7 +88,7 @@ export const einheitenRouter = router({
       });
     }),
 
-  create: protectedProcedure
+  create: writeProcedure
     .input(
       z.object({
         objektId: z.string(),
@@ -133,7 +133,7 @@ export const einheitenRouter = router({
       return einheit;
     }),
 
-  update: protectedProcedure
+  update: writeProcedure
     .input(
       z.object({
         id: z.string(),
@@ -172,7 +172,7 @@ export const einheitenRouter = router({
       return einheit;
     }),
 
-  updateStatus: protectedProcedure
+  updateStatus: writeProcedure
     .input(
       z.object({
         id: z.string(),

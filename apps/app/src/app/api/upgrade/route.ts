@@ -22,7 +22,10 @@ export async function POST(req: NextRequest) {
     const billingInterval = billing === "annual" ? "annual" : "monthly";
 
     if (!process.env.STRIPE_SECRET_KEY) {
-      // Fallback: just update the tenant plan without Stripe
+      if (process.env.NODE_ENV === "production") {
+        return NextResponse.json({ error: "Zahlungssystem nicht konfiguriert" }, { status: 503 });
+      }
+      // Development-only fallback
       await db.tenant.update({
         where: { id: user.tenantId },
         data: { plan, billingInterval, trialEndsAt: null },

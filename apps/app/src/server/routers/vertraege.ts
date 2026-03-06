@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, protectedProcedure } from "../trpc";
+import { router, protectedProcedure, writeProcedure } from "../trpc";
 import { logAudit } from "../middleware/audit";
 import { Decimal } from "@prisma/client/runtime/library";
 
@@ -47,7 +47,7 @@ export const vertraegeRouter = router({
       });
     }),
 
-  create: protectedProcedure
+  create: writeProcedure
     .input(
       z.object({
         mieterId: z.string(),

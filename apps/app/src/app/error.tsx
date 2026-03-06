@@ -20,8 +20,8 @@ export default function Error({
         <p className="mt-4 text-[var(--text-secondary)]">
           Es tut uns leid, aber etwas ist schief gelaufen.
         </p>
-        {error.message && (
-          <p className="mt-2 text-sm text-[var(--text-muted)]">{error.message}</p>
+        {error.digest && (
+          <p className="mt-2 text-sm text-[var(--text-muted)]">Fehlercode: {error.digest}</p>
         )}
         <div className="mt-8 space-x-4">
           <button

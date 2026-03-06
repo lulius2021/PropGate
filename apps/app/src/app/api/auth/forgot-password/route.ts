@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomBytes } from "crypto";
 import { db } from "@/lib/db";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const { allowed, resetIn } = checkRateLimit(`forgot-password:${ip}`, 3, 15 * 60 * 1000);
+    if (!allowed) {
+      return NextResponse.json(
+        { error: `Zu viele Anfragen. Versuchen Sie es in ${resetIn} Sekunden erneut.` },
+        { status: 429 }
+      );
+    }
+
     const { email } = await req.json();
 
     if (!email) {
@@ -36,10 +46,13 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Log reset link (no email service configured)
+    // Send reset link via email (TODO: configure Resend)
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
     const resetUrl = `${baseUrl}/reset-password?token=${token}`;
-    console.log(`[Password Reset] Link for ${email}: ${resetUrl}`);
+    // Only log in development, never in production
+    if (process.env.NODE_ENV === "development") {
+      console.log(`[Password Reset] Link for ${email}: ${resetUrl}`);
+    }
 
     return successResponse;
   } catch (error) {

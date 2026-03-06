@@ -26,7 +26,7 @@ function LoginForm() {
   const [showPw, setShowPw] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(loginSchema as any),
   });
 
   const onSubmit = async (data: LoginFormData) => {

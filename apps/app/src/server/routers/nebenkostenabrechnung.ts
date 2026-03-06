@@ -1,4 +1,4 @@
-import { router, protectedProcedure } from "../trpc";
+import { router, protectedProcedure, writeProcedure } from "../trpc";
 import { z } from "zod";
 import { logAudit } from "../middleware/audit";
 import { berechneNebenkostenabrechnung } from "../services/nebenkostenabrechnung.service";
@@ -32,7 +32,7 @@ export const nebenkostenabrechnungRouter = router({
       });
     }),
 
-  create: protectedProcedure
+  create: writeProcedure
     .input(z.object({
       objektId: z.string(),
       abrechnungsjahr: z.number().int().min(2000).max(2100),
@@ -75,7 +75,7 @@ export const nebenkostenabrechnungRouter = router({
       return nka;
     }),
 
-  delete: protectedProcedure
+  delete: writeProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       await ctx.db.nebenkostenabrechnung.delete({ where: { id: input.id, tenantId: ctx.tenantId } });

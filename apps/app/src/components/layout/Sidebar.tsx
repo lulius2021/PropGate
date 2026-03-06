@@ -21,6 +21,7 @@ import {
   Gauge,
   CalendarCheck,
   BarChart3,
+  LineChart,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -60,6 +61,7 @@ const navGroups = [
     label: "ANALYSE",
     items: [
       { name: "Reporting", href: "/reporting", icon: BarChart3 },
+      { name: "Chart Analysis", href: "/analyze", icon: LineChart },
     ],
   },
   {

@@ -83,7 +83,7 @@ export function DokumentUploadModal({ open, onClose, onSuccess }: Props) {
       const base64 = (reader.result as string).split(",")[1];
       uploadMutation.mutate({
         dateiname: file.name,
-        mimeType: file.type,
+        mimeType: file.type as any,
         dateiinhalt: base64,
         groesse: file.size,
         typ: typ as any,

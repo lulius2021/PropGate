@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, protectedProcedure } from "../trpc";
+import { router, protectedProcedure, writeProcedure } from "../trpc";
 import { db } from "@/lib/db";
 import { Decimal } from "@prisma/client/runtime/library";
 import {
@@ -86,7 +86,7 @@ export const krediteRouter = router({
   /**
    * Create credit
    */
-  create: protectedProcedure
+  create: writeProcedure
     .input(
       z.object({
         bezeichnung: z.string().min(1),
@@ -136,7 +136,7 @@ export const krediteRouter = router({
   /**
    * Update credit
    */
-  update: protectedProcedure
+  update: writeProcedure
     .input(
       z.object({
         id: z.string(),
@@ -171,7 +171,7 @@ export const krediteRouter = router({
   /**
    * Delete credit
    */
-  delete: protectedProcedure
+  delete: writeProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const tenantId = ctx.tenantId;

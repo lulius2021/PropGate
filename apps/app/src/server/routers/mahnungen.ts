@@ -3,7 +3,7 @@
  * Handles dunning process
  */
 
-import { router, protectedProcedure } from "../trpc";
+import { router, protectedProcedure, writeProcedure } from "../trpc";
 import { z } from "zod";
 import { logAudit } from "../middleware/audit";
 import {
@@ -242,7 +242,7 @@ export const mahnungenRouter = router({
   /**
    * Mahnung stornieren
    */
-  stornieren: protectedProcedure
+  stornieren: writeProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const mahnung = await ctx.db.mahnung.update({
@@ -314,7 +314,7 @@ export const mahnungenRouter = router({
   /**
    * Status ändern (alle gültigen Statusübergänge)
    */
-  updateStatus: protectedProcedure
+  updateStatus: writeProcedure
     .input(
       z.object({
         id: z.string(),

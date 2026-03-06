@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, protectedProcedure } from "../trpc";
+import { router, protectedProcedure, writeProcedure } from "../trpc";
 import { logAudit } from "../middleware/audit";
 
 export const mieterRouter = router({
@@ -49,7 +49,7 @@ export const mieterRouter = router({
       });
     }),
 
-  create: protectedProcedure
+  create: writeProcedure
     .input(
       z.object({
         // Stammdaten
@@ -116,7 +116,7 @@ export const mieterRouter = router({
       return mieter;
     }),
 
-  update: protectedProcedure
+  update: writeProcedure
     .input(
       z.object({
         id: z.string(),

@@ -60,6 +60,6 @@ export async function GET(request: Request) {
     });
   } catch (err) {
     console.error("Cron error:", err);
-    return Response.json({ ok: false, error: String(err) }, { status: 500 });
+    return Response.json({ ok: false, error: "Internal server error" }, { status: 500 });
   }
 }

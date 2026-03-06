@@ -21,7 +21,7 @@
 /* Dark Theme */
 .dark {
   --bg-page:        #0b0d14;
-  --bg-sidebar:     #0d0f18;
+  --bg-sidebar:     #000000;
   --bg-card:        #181c2e;
   --bg-card-hover:  #1e2238;
   --border:         rgba(255,255,255,0.10);
@@ -105,15 +105,9 @@
   transform: scale(1.15);
 }
 
-/* Sidebar ambient blue glow — centered on nav area */
+/* Sidebar ambient blue glow — disabled for clean black */
 .sidebar-glow {
-  background-image:
-    radial-gradient(ellipse 110% 55% at 50% 48%,
-      rgba(59, 130, 246, 0.18) 0%,
-      rgba(59, 130, 246, 0.06) 50%,
-      transparent 75%),
-    radial-gradient(ellipse 80% 25% at 50% 0%,
-      rgba(99, 179, 255, 0.10) 0%, transparent 60%);
+  background-image: none;
 }
 
 /* App page fade-in */

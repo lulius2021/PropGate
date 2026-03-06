@@ -213,13 +213,19 @@ async function getPaymentMethodFromIntent(paymentIntentId: string): Promise<stri
   }
 }
 
+function escapeHtml(str: string): string {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
 function buildReferralCreditEmail(recipientName: string, amount: number, referredTenantName: string): string {
+  const safeName = escapeHtml(recipientName);
+  const safeTenant = escapeHtml(referredTenantName);
   return `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
       <h2 style="color: #1a1a2e;">Ihre Empfehlungs-Gutschrift ist eingegangen!</h2>
-      <p>Hallo ${recipientName},</p>
+      <p>Hallo ${safeName},</p>
       <p>
-        <strong>${referredTenantName}</strong> hat gerade die erste Zahlung für sein PropGate-Abonnement abgeschlossen.
+        <strong>${safeTenant}</strong> hat gerade die erste Zahlung für sein PropGate-Abonnement abgeschlossen.
         Als Dankeschön für Ihre Empfehlung erhalten Sie eine Gutschrift von
         <strong>${amount.toFixed(2).replace(".", ",")} €</strong>
         auf Ihr nächstes Abonnement.

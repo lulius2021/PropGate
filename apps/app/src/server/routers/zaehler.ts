@@ -3,7 +3,7 @@
  * Handles meter management and readings
  */
 
-import { router, protectedProcedure } from "../trpc";
+import { router, protectedProcedure, writeProcedure } from "../trpc";
 import { z } from "zod";
 import { logAudit } from "../middleware/audit";
 
@@ -67,7 +67,7 @@ export const zaehlerRouter = router({
   /**
    * Zähler erstellen
    */
-  create: protectedProcedure
+  create: writeProcedure
     .input(
       z.object({
         zaehlernummer: z.string().min(1),

@@ -119,5 +119,45 @@ export async function checkObjektLimit(ctx: {
   }
 }
 
+/**
+ * Admin-only procedure - requires ADMIN role
+ */
+export const adminProcedure = protectedProcedure.use(async function isAdmin(opts) {
+  const { ctx } = opts;
+  const user = await ctx.db.user.findUnique({
+    where: { id: ctx.userId },
+    select: { role: true },
+  });
+
+  if (!user || user.role !== "ADMIN") {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Nur Administratoren können diese Aktion ausführen.",
+    });
+  }
+
+  return opts.next({ ctx: { ...ctx, role: user.role } });
+});
+
+/**
+ * Write procedure - requires ADMIN or SACHBEARBEITER role (not READONLY)
+ */
+export const writeProcedure = protectedProcedure.use(async function canWrite(opts) {
+  const { ctx } = opts;
+  const user = await ctx.db.user.findUnique({
+    where: { id: ctx.userId },
+    select: { role: true },
+  });
+
+  if (!user || user.role === "READONLY") {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Sie haben keine Berechtigung für diese Aktion.",
+    });
+  }
+
+  return opts.next({ ctx: { ...ctx, role: user.role } });
+});
+
 export const router = t.router;
 export const middleware = t.middleware;

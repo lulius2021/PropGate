@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3000",
+    "dev": "next dev --port 3001",
     "prebuild": "pnpm -C ../.. --filter=marketing build",
     "build": "next build",
     "start": "next start",
@@ -41,6 +41,7 @@
     "date-fns": "^4.1.0",
     "docx": "^9.5.3",
     "handlebars": "^4.7.8",
+    "jose": "^6.2.0",
     "lucide-react": "^0.564.0",
     "next": "16.1.6",
     "next-auth": "5.0.0-beta.30",

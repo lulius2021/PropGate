@@ -3,7 +3,7 @@
  * Handles payment requests (Sollstellungen)
  */
 
-import { router, protectedProcedure } from "../trpc";
+import { router, protectedProcedure, writeProcedure } from "../trpc";
 import { z } from "zod";
 import { logAudit } from "../middleware/audit";
 import { erstelleMonatlicheWarmmiete } from "../services/warmmiete.service";
@@ -108,7 +108,7 @@ export const sollstellungenRouter = router({
   /**
    * Manuelle Sollstellung erstellen
    */
-  create: protectedProcedure
+  create: writeProcedure
     .input(
       z.object({
         mietverhaeltnisId: z.string().optional(),
@@ -190,7 +190,7 @@ export const sollstellungenRouter = router({
   /**
    * Sollstellung löschen/stornieren
    */
-  delete: protectedProcedure
+  delete: writeProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const sollstellung = await ctx.db.sollstellung.findUnique({
@@ -228,7 +228,7 @@ export const sollstellungenRouter = router({
   /**
    * Sollstellung bearbeiten (nur wenn OFFEN)
    */
-  update: protectedProcedure
+  update: writeProcedure
     .input(z.object({
       id: z.string(),
       titel: z.string().min(1).optional(),

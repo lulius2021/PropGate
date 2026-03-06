@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { router, protectedProcedure } from "../trpc";
+import { router, adminProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 
 export const seedingRouter = router({
-  createDemoData: protectedProcedure.mutation(async ({ ctx }) => {
+  createDemoData: adminProcedure.mutation(async ({ ctx }) => {
     const tenantId = ctx.tenantId;
 
     // Guard: only if DB is empty

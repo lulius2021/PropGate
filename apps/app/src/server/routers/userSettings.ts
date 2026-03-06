@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, protectedProcedure } from "../trpc";
+import { router, protectedProcedure, adminProcedure } from "../trpc";
 
 export const userSettingsRouter = router({
   getSettings: protectedProcedure.query(async ({ ctx }) => {
@@ -37,7 +37,7 @@ export const userSettingsRouter = router({
       });
     }),
 
-  updateAutoMahnung: protectedProcedure
+  updateAutoMahnung: adminProcedure
     .input(
       z.object({
         autoMahnungAktiv: z.boolean(),

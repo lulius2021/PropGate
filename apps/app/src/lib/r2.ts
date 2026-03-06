@@ -15,32 +15,40 @@
 import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
-// Env Vars validieren
-if (!process.env.R2_ACCOUNT_ID) {
-  throw new Error('R2_ACCOUNT_ID is not set');
-}
-if (!process.env.R2_ACCESS_KEY_ID) {
-  throw new Error('R2_ACCESS_KEY_ID is not set');
-}
-if (!process.env.R2_SECRET_ACCESS_KEY) {
-  throw new Error('R2_SECRET_ACCESS_KEY is not set');
-}
-if (!process.env.R2_BUCKET_NAME) {
-  throw new Error('R2_BUCKET_NAME is not set');
+// Lazy-init: R2 env vars are validated at runtime, not build time
+function getR2Config() {
+  const accountId = process.env.R2_ACCOUNT_ID;
+  const accessKeyId = process.env.R2_ACCESS_KEY_ID;
+  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
+  const bucketName = process.env.R2_BUCKET_NAME;
+
+  if (!accountId || !accessKeyId || !secretAccessKey || !bucketName) {
+    throw new Error('R2 environment variables are not configured (R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME)');
+  }
+
+  return { accountId, accessKeyId, secretAccessKey, bucketName };
 }
 
-const ACCOUNT_ID = process.env.R2_ACCOUNT_ID;
-const BUCKET_NAME = process.env.R2_BUCKET_NAME;
+let _r2Client: S3Client | null = null;
 
-// S3 Client (CloudFlare R2 ist S3-kompatibel)
-const r2Client = new S3Client({
-  region: 'auto',
-  endpoint: `https://${ACCOUNT_ID}.r2.cloudflarestorage.com`,
-  credentials: {
-    accessKeyId: process.env.R2_ACCESS_KEY_ID,
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
-  },
-});
+function getR2Client() {
+  if (!_r2Client) {
+    const config = getR2Config();
+    _r2Client = new S3Client({
+      region: 'auto',
+      endpoint: `https://${config.accountId}.r2.cloudflarestorage.com`,
+      credentials: {
+        accessKeyId: config.accessKeyId,
+        secretAccessKey: config.secretAccessKey,
+      },
+    });
+  }
+  return _r2Client;
+}
+
+function getBucketName() {
+  return getR2Config().bucketName;
+}
 
 /**
  * Upload-Datei zu R2
@@ -56,13 +64,13 @@ export async function uploadToR2(
   contentType: string
 ): Promise<string> {
   const command = new PutObjectCommand({
-    Bucket: BUCKET_NAME,
+    Bucket: getBucketName(),
     Key: key,
     Body: buffer,
     ContentType: contentType,
   });
 
-  await r2Client.send(command);
+  await getR2Client().send(command);
   return key;
 }
 
@@ -74,11 +82,11 @@ export async function uploadToR2(
  */
 export async function downloadFromR2(key: string): Promise<Buffer> {
   const command = new GetObjectCommand({
-    Bucket: BUCKET_NAME,
+    Bucket: getBucketName(),
     Key: key,
   });
 
-  const response = await r2Client.send(command);
+  const response = await getR2Client().send(command);
 
   if (!response.Body) {
     throw new Error('No file body returned');
@@ -104,11 +112,33 @@ export async function getSignedDownloadUrl(
   expiresIn: number = 3600
 ): Promise<string> {
   const command = new GetObjectCommand({
-    Bucket: BUCKET_NAME,
+    Bucket: getBucketName(),
     Key: key,
   });
 
-  return await getSignedUrl(r2Client, command, { expiresIn });
+  return await getSignedUrl(getR2Client(), command, { expiresIn });
+}
+
+/**
+ * Generiere Signed Upload URL (für direkten Upload vom Client)
+ *
+ * @param key - S3 Key
+ * @param contentType - MIME Type
+ * @param expiresIn - Gültigkeit in Sekunden (default: 10 Minuten)
+ * @returns Signed Upload URL
+ */
+export async function getSignedUploadUrl(
+  key: string,
+  contentType: string,
+  expiresIn: number = 600
+): Promise<string> {
+  const command = new PutObjectCommand({
+    Bucket: getBucketName(),
+    Key: key,
+    ContentType: contentType,
+  });
+
+  return await getSignedUrl(getR2Client(), command, { expiresIn });
 }
 
 /**
@@ -118,11 +148,11 @@ export async function getSignedDownloadUrl(
  */
 export async function deleteFromR2(key: string): Promise<void> {
   const command = new DeleteObjectCommand({
-    Bucket: BUCKET_NAME,
+    Bucket: getBucketName(),
     Key: key,
   });
 
-  await r2Client.send(command);
+  await getR2Client().send(command);
 }
 
 /**

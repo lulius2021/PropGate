@@ -3,7 +3,7 @@
  * Handles cost and time tracking
  */
 
-import { router, protectedProcedure } from "../trpc";
+import { router, protectedProcedure, writeProcedure } from "../trpc";
 import { z } from "zod";
 import { logAudit } from "../middleware/audit";
 import { berechneKostenStatus } from "../services/kosten-status.service";

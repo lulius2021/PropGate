@@ -1,15 +1,23 @@
 import { z } from "zod";
-import { router, protectedProcedure } from "../trpc";
+import { router, protectedProcedure, writeProcedure } from "../trpc";
 import { logAudit } from "../middleware/audit";
 
 export const dokumenteRouter = router({
-  upload: protectedProcedure
+  upload: writeProcedure
     .input(
       z.object({
-        dateiname: z.string(),
-        mimeType: z.string(),
-        dateiinhalt: z.string(), // base64
-        groesse: z.number(),
+        dateiname: z.string().max(255),
+        mimeType: z.enum([
+          "application/pdf",
+          "image/png",
+          "image/jpeg",
+          "image/webp",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "text/csv",
+        ]),
+        dateiinhalt: z.string().max(14_000_000), // ~10MB base64
+        groesse: z.number().max(10 * 1024 * 1024),
         typ: z.enum([
           "MIETVERTRAG",
           "MAHNUNG",
@@ -75,13 +83,21 @@ export const dokumenteRouter = router({
   /**
    * Neue Version eines Dokuments hochladen
    */
-  uploadNewVersion: protectedProcedure
+  uploadNewVersion: writeProcedure
     .input(
       z.object({
-        dateiname: z.string(),
-        mimeType: z.string(),
-        dateiinhalt: z.string(),
-        groesse: z.number(),
+        dateiname: z.string().max(255),
+        mimeType: z.enum([
+          "application/pdf",
+          "image/png",
+          "image/jpeg",
+          "image/webp",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "text/csv",
+        ]),
+        dateiinhalt: z.string().max(14_000_000),
+        groesse: z.number().max(10 * 1024 * 1024),
         typ: z.enum([
           "MIETVERTRAG",
           "MAHNUNG",

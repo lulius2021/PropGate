@@ -1,4 +1,4 @@
-import { router, protectedProcedure } from "../trpc";
+import { router, protectedProcedure, writeProcedure } from "../trpc";
 import { z } from "zod";
 import { logAudit } from "../middleware/audit";
 
@@ -60,7 +60,7 @@ export const wartungRouter = router({
       });
     }),
 
-  create: protectedProcedure
+  create: writeProcedure
     .input(z.object({
       bezeichnung: z.string().min(1),
       kategorie: z.string().min(1),
@@ -80,7 +80,7 @@ export const wartungRouter = router({
       return aufgabe;
     }),
 
-  update: protectedProcedure
+  update: writeProcedure
     .input(z.object({
       id: z.string(),
       bezeichnung: z.string().min(1).optional(),
@@ -132,7 +132,7 @@ export const wartungRouter = router({
       return updated;
     }),
 
-  delete: protectedProcedure
+  delete: writeProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       await ctx.db.wartungsaufgabe.delete({ where: { id: input.id, tenantId: ctx.tenantId } });

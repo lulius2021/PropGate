@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, protectedProcedure, checkObjektLimit } from "../trpc";
+import { router, protectedProcedure, writeProcedure, checkObjektLimit } from "../trpc";
 import { logAudit } from "../middleware/audit";
 
 export const objekteRouter = router({
@@ -43,7 +43,7 @@ export const objekteRouter = router({
       });
     }),
 
-  create: protectedProcedure
+  create: writeProcedure
     .input(
       z.object({
         // Basis - nur Bezeichnung ist wirklich erforderlich
@@ -139,7 +139,7 @@ export const objekteRouter = router({
       return objekt;
     }),
 
-  update: protectedProcedure
+  update: writeProcedure
     .input(
       z.object({
         id: z.string(),
@@ -238,7 +238,7 @@ export const objekteRouter = router({
       return objekt;
     }),
 
-  delete: protectedProcedure
+  delete: writeProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const objekt = await ctx.db.objekt.findFirst({
