@@ -544,8 +544,8 @@ function AbonnementTab() {
 
         {billing?.referralCode && (
           <p className="mt-3 text-xs text-[var(--text-secondary)]">
-            Teilen Sie diesen Code mit: „Teste PropGate 30 Tage gratis – nutze meinen Code{" "}
-            <strong>{billing.referralCode}</strong> bei der Registrierung!"
+            Teilen Sie diesen Code mit: &bdquo;Teste PropGate 30 Tage gratis – nutze meinen Code{" "}
+            <strong>{billing.referralCode}</strong> bei der Registrierung!&ldquo;
           </p>
         )}
       </div>

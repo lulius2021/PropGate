@@ -92,7 +92,7 @@ function PaymentStep({
     try {
       // Try confirmPayment first, fall back to confirmSetup
       // Versuche confirmPayment, falls fehlschlägt confirmSetup (für Trials)
-      let result = await stripe.confirmPayment({
+      const result = await stripe.confirmPayment({
         elements,
         confirmParams: { return_url: `${window.location.origin}/dashboard` },
         redirect: "if_required",

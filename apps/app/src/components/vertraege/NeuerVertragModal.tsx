@@ -129,7 +129,7 @@ export function NeuerVertragModal({ isOpen, onClose, onSuccess, defaultEinheitId
             </button>
             {mieter?.length === 0 && (
               <p className="mt-1 text-xs text-amber-600">
-                Keine Mieter vorhanden. Bitte zuerst unter "Mieter" einen Mieter anlegen.
+                Keine Mieter vorhanden. Bitte zuerst unter &bdquo;Mieter&ldquo; einen Mieter anlegen.
               </p>
             )}
           </div>

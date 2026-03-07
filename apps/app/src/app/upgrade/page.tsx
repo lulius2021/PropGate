@@ -71,7 +71,7 @@ function PaymentStep({
     if (!stripe || !elements) return;
     setLoading(true);
     try {
-      let result = await stripe.confirmPayment({
+      const result = await stripe.confirmPayment({
         elements,
         confirmParams: { return_url: `${window.location.origin}/dashboard` },
         redirect: "if_required",

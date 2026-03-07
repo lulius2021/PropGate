@@ -101,7 +101,7 @@ export default function NKADetailPage() {
       {activeTab === "positionen" && (
         <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] shadow-sm">
           {!nka.positionen?.length ? (
-            <div className="p-8 text-center text-[var(--text-secondary)]">Noch keine Positionen. Klicken Sie auf "Berechnen".</div>
+            <div className="p-8 text-center text-[var(--text-secondary)]">Noch keine Positionen. Klicken Sie auf &bdquo;Berechnen&ldquo;.</div>
           ) : (
             <table className="min-w-full divide-y divide-[var(--border)]">
               <thead className="bg-[var(--bg-page)]">
@@ -132,7 +132,7 @@ export default function NKADetailPage() {
       {activeTab === "mieter" && (
         <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] shadow-sm">
           {!nka.mieterpositionen?.length ? (
-            <div className="p-8 text-center text-[var(--text-secondary)]">Noch keine Mieterpositionen. Klicken Sie auf "Berechnen".</div>
+            <div className="p-8 text-center text-[var(--text-secondary)]">Noch keine Mieterpositionen. Klicken Sie auf &bdquo;Berechnen&ldquo;.</div>
           ) : (
             <table className="min-w-full divide-y divide-[var(--border)]">
               <thead className="bg-[var(--bg-page)]">

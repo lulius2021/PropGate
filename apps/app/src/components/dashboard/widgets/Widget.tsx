@@ -1472,7 +1472,7 @@ export function Widget({ type, size, data, isLoading }: WidgetProps) {
     });
   };
 
-  const ZeitraumSelector = () => (
+  const zeitraumSelectorJsx = (
     <div className="flex items-center gap-1.5 flex-wrap">
       <select
         value={chartJahr}
@@ -1538,7 +1538,7 @@ export function Widget({ type, size, data, isLoading }: WidgetProps) {
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-2 flex-wrap">
               <p className="text-sm font-medium text-[var(--text-secondary)]">Soll / Ist Verlauf</p>
-              <ZeitraumSelector />
+              {zeitraumSelectorJsx}
             </div>
             <div className="flex gap-3 text-xs text-[var(--text-secondary)]">
               <span className="flex items-center gap-1">
@@ -1589,7 +1589,7 @@ export function Widget({ type, size, data, isLoading }: WidgetProps) {
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-2 flex-wrap">
               <p className="text-sm font-medium text-[var(--text-secondary)]">Cashflow Verlauf</p>
-              <ZeitraumSelector />
+              {zeitraumSelectorJsx}
             </div>
             <div className="flex gap-3 text-xs text-[var(--text-secondary)]">
               <span className="flex items-center gap-1">
@@ -1640,7 +1640,7 @@ export function Widget({ type, size, data, isLoading }: WidgetProps) {
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-2 flex-wrap">
               <p className="text-sm font-medium text-[var(--text-secondary)]">Kosten Verlauf</p>
-              <ZeitraumSelector />
+              {zeitraumSelectorJsx}
             </div>
             <div className="flex gap-3 text-xs text-[var(--text-secondary)]">
               <span className="flex items-center gap-1">
@@ -1691,7 +1691,7 @@ export function Widget({ type, size, data, isLoading }: WidgetProps) {
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-2 flex-wrap">
               <p className="text-sm font-medium text-[var(--text-secondary)]">Tickets Verlauf</p>
-              <ZeitraumSelector />
+              {zeitraumSelectorJsx}
             </div>
             <div className="flex gap-3 text-xs text-[var(--text-secondary)]">
               <span className="flex items-center gap-1">

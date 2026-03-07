@@ -116,7 +116,7 @@ export function GlobalSearch() {
                 </div>
               )}
               {results.objekte.length === 0 && results.mieter.length === 0 && results.tickets.length === 0 && results.einheiten.length === 0 && (
-                <div className="px-4 py-8 text-center text-sm text-[var(--text-secondary)]">Keine Ergebnisse für "{query}"</div>
+                <div className="px-4 py-8 text-center text-sm text-[var(--text-secondary)]">Keine Ergebnisse für &bdquo;{query}&ldquo;</div>
               )}
             </div>
           )}
