@@ -21,7 +21,7 @@ export function GlobalSearch() {
         e.preventDefault();
         setOpen((o) => !o);
       }
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") { setOpen(false); setQuery(""); }
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
@@ -29,12 +29,16 @@ export function GlobalSearch() {
 
   useEffect(() => {
     if (open) { setTimeout(() => inputRef.current?.focus(), 50); }
-    else { setQuery(""); }
   }, [open]);
+
+  const closeSearch = () => {
+    setOpen(false);
+    setQuery("");
+  };
 
   const navigate = (href: string) => {
     router.push(href);
-    setOpen(false);
+    closeSearch();
   };
 
   if (!open) {
@@ -51,7 +55,7 @@ export function GlobalSearch() {
   }
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto" onClick={() => setOpen(false)}>
+    <div className="fixed inset-0 z-50 overflow-y-auto" onClick={closeSearch}>
       <div className="flex min-h-screen items-start justify-center pt-16 px-4">
         <div className="relative w-full max-w-xl rounded-xl bg-[var(--bg-card)] shadow-2xl ring-1 ring-[var(--border)]"
           onClick={(e) => e.stopPropagation()}>
@@ -70,7 +74,7 @@ export function GlobalSearch() {
               {results.objekte.length > 0 && (
                 <div className="mb-2">
                   <div className="px-2 py-1 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Objekte</div>
-                  {results.objekte.map((o: any) => (
+                  {results.objekte.map((o) => (
                     <button key={o.id} onClick={() => navigate(`/objekte/${o.id}`)}
                       className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm hover:bg-[var(--bg-card-hover)]">
                       <span className="flex-1 font-medium text-[var(--text-primary)]">{o.bezeichnung}</span>
@@ -82,7 +86,7 @@ export function GlobalSearch() {
               {results.mieter.length > 0 && (
                 <div className="mb-2">
                   <div className="px-2 py-1 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Mieter</div>
-                  {results.mieter.map((m: any) => (
+                  {results.mieter.map((m) => (
                     <button key={m.id} onClick={() => navigate(`/mieter/${m.id}`)}
                       className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm hover:bg-[var(--bg-card-hover)]">
                       <span className="flex-1 font-medium text-[var(--text-primary)]">{m.nachname}, {m.vorname}</span>
@@ -94,7 +98,7 @@ export function GlobalSearch() {
               {results.tickets.length > 0 && (
                 <div className="mb-2">
                   <div className="px-2 py-1 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Tickets</div>
-                  {results.tickets.map((t: any) => (
+                  {results.tickets.map((t) => (
                     <button key={t.id} onClick={() => navigate(`/tickets/${t.id}`)}
                       className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm hover:bg-[var(--bg-card-hover)]">
                       <span className="flex-1 font-medium text-[var(--text-primary)]">{t.titel}</span>
@@ -106,11 +110,11 @@ export function GlobalSearch() {
               {results.einheiten.length > 0 && (
                 <div className="mb-2">
                   <div className="px-2 py-1 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Einheiten</div>
-                  {results.einheiten.map((e: any) => (
-                    <button key={e.id} onClick={() => navigate(`/einheiten/${e.id}`)}
+                  {results.einheiten.map((ein) => (
+                    <button key={ein.id} onClick={() => navigate(`/einheiten/${ein.id}`)}
                       className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm hover:bg-[var(--bg-card-hover)]">
-                      <span className="flex-1 font-medium text-[var(--text-primary)]">Einheit {e.einheitNr}</span>
-                      <span className="text-[var(--text-muted)]">{e.objekt?.bezeichnung}</span>
+                      <span className="flex-1 font-medium text-[var(--text-primary)]">Einheit {ein.einheitNr}</span>
+                      <span className="text-[var(--text-muted)]">{ein.objekt?.bezeichnung}</span>
                     </button>
                   ))}
                 </div>

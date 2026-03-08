@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { trpc } from "@/lib/trpc/client";
 
 interface NeuesObjektModalProps {
@@ -137,7 +138,7 @@ export function NeuesObjektModal({ isOpen, onClose, onSuccess }: NeuesObjektModa
                 <select
                   required
                   value={formData.objektart}
-                  onChange={(e) => setFormData({ ...formData, objektart: e.target.value as any })}
+                  onChange={(e) => setFormData({ ...formData, objektart: e.target.value as "WOHNHAUS" | "GEWERBE" | "GEMISCHT" })}
                   className="w-full rounded-lg border border-[var(--border)] px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
                   <option value="WOHNHAUS">Wohnhaus</option>
@@ -249,10 +250,13 @@ export function NeuesObjektModal({ isOpen, onClose, onSuccess }: NeuesObjektModa
                 </div>
               ) : (
                 <div className="relative">
-                  <img
+                  <Image
                     src={imagePreview}
                     alt="Vorschau"
+                    width={800}
+                    height={160}
                     className="w-full max-h-40 rounded-xl object-contain border border-[var(--border)]"
+                    unoptimized
                   />
                   <button
                     type="button"

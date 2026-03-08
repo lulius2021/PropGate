@@ -10,7 +10,7 @@ import { ordneZahlungZu } from "./deckung.service";
 interface AutoMatchResult {
   zahlungId: string;
   matched: boolean;
-  zuordnungen?: any[];
+  zuordnungen?: unknown[];
   reason?: string;
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { trpc } from "@/lib/trpc/client";
 
 interface Einheit {
@@ -27,29 +27,23 @@ export function EinheitBearbeitenModal({
   onClose,
   onSuccess,
 }: EinheitBearbeitenModalProps) {
-  const [formData, setFormData] = useState({
-    einheitNr: "",
-    typ: "WOHNUNG" as "WOHNUNG" | "GEWERBE" | "STELLPLATZ" | "LAGER",
-    flaeche: "",
-    zimmer: "",
-    lage: "",
-    eurProQm: "",
-    ausstattung: "",
+  const deriveFormData = (e: Einheit | null) => ({
+    einheitNr: e?.einheitNr ?? "",
+    typ: (e?.typ ?? "WOHNUNG") as "WOHNUNG" | "GEWERBE" | "STELLPLATZ" | "LAGER",
+    flaeche: e?.flaeche ?? "",
+    zimmer: e?.zimmer?.toString() ?? "",
+    lage: e?.lage ?? "",
+    eurProQm: e?.eurProQm ?? "",
+    ausstattung: e?.ausstattung ?? "",
   });
 
-  useEffect(() => {
-    if (einheit) {
-      setFormData({
-        einheitNr: einheit.einheitNr,
-        typ: einheit.typ,
-        flaeche: einheit.flaeche,
-        zimmer: einheit.zimmer?.toString() ?? "",
-        lage: einheit.lage ?? "",
-        eurProQm: einheit.eurProQm ?? "",
-        ausstattung: einheit.ausstattung ?? "",
-      });
-    }
-  }, [einheit]);
+  const [prevEinheitId, setPrevEinheitId] = useState<string | null>(null);
+  const [formData, setFormData] = useState(() => deriveFormData(einheit));
+
+  if (einheit && einheit.id !== prevEinheitId) {
+    setPrevEinheitId(einheit.id);
+    setFormData(deriveFormData(einheit));
+  }
 
   const utils = trpc.useUtils();
 

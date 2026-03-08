@@ -83,7 +83,7 @@ export default function ObjektePage() {
           {objekte?.map((objekt) => (
             <ObjektCard
               key={objekt.id}
-              objekt={objekt as any}
+              objekt={objekt as { id: string; bezeichnung: string; strasse: string; plz: string; ort: string; objektart: string; bildUrl?: string | null; _count: { einheiten: number } }}
               onClick={() => router.push(`/objekte/${objekt.id}`)}
             />
           ))}

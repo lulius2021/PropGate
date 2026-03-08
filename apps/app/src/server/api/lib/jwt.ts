@@ -87,7 +87,7 @@ export async function verifyTempToken(
   const { payload } = await jwtVerify(token, getSigningKey(), {
     issuer: "propgate-api",
   });
-  if ((payload as any).purpose !== "2fa") {
+  if ((payload as Record<string, unknown>).purpose !== "2fa") {
     throw new Error("Invalid token purpose");
   }
   return payload as TempTokenPayload;

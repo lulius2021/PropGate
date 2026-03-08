@@ -26,7 +26,7 @@ function LoginForm() {
   const [showPw, setShowPw] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema as any),
+    resolver: zodResolver(loginSchema),
   });
 
   const onSubmit = async (data: LoginFormData) => {
@@ -55,8 +55,8 @@ function LoginForm() {
         }
         router.refresh();
       }
-    } catch (err: any) {
-      if (err?.message?.includes("429") || err?.status === 429) {
+    } catch (err: unknown) {
+      if (err instanceof Error && (err.message?.includes("429") || (err as { status?: number }).status === 429)) {
         setError("Zu viele Anmeldeversuche. Bitte warten Sie einen Moment.");
       } else {
         setError("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");

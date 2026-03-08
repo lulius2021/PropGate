@@ -56,7 +56,7 @@ export default function NeueSollstellungModal({ open, onClose, onSuccess }: Prop
   if (!open) return null;
 
   // Filter to active mietverhaeltnisse (no auszugsdatum)
-  const aktiveMV = vertraege?.filter((v: any) => !v.auszugsdatum) ?? [];
+  const aktiveMV = vertraege?.filter((v) => !v.auszugsdatum) ?? [];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-20 backdrop-blur-sm p-4">
@@ -88,7 +88,7 @@ export default function NeueSollstellungModal({ open, onClose, onSuccess }: Prop
               className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-page)] px-4 py-2 text-sm text-[var(--text-primary)] focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
               <option value="">Ohne Zuordnung</option>
-              {aktiveMV.map((mv: any) => (
+              {aktiveMV.map((mv) => (
                 <option key={mv.id} value={mv.id}>
                   {mv.vertragsnummer ?? mv.einheit.einheitNr} — {mv.mieter.nachname}{mv.mieter.vorname ? `, ${mv.mieter.vorname}` : ""}{mv.mieter.firma ? ` (${mv.mieter.firma})` : ""} — {mv.einheit.objekt?.bezeichnung}
                 </option>

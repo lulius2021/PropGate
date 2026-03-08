@@ -102,6 +102,16 @@ function getAuthRateLimit(pathname: string): { limit: number; window: number } |
   if (pathname === "/api/auth/verify-2fa") {
     return { limit: MAX_REQUESTS_PER_WINDOW.verify2fa, window: RATE_LIMIT_WINDOW };
   }
+  // REST API v1 auth endpoints
+  if (pathname === "/api/v1/auth/login") {
+    return { limit: MAX_REQUESTS_PER_WINDOW.login, window: RATE_LIMIT_WINDOW };
+  }
+  if (pathname === "/api/v1/auth/refresh") {
+    return { limit: 10, window: RATE_LIMIT_WINDOW };
+  }
+  if (pathname === "/api/v1/auth/2fa/verify") {
+    return { limit: MAX_REQUESTS_PER_WINDOW.verify2fa, window: RATE_LIMIT_WINDOW };
+  }
   return null;
 }
 

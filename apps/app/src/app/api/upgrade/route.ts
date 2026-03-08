@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Nicht angemeldet" }, { status: 401 });
     }
 
-    const user = session.user as any;
+    const user = session.user as { id: string; email: string | null; tenantId: string };
     const { plan, billing } = await req.json();
 
     if (!VALID_PLANS.includes(plan)) {

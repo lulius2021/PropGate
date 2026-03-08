@@ -382,7 +382,7 @@ export default function KreditePage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--border)] bg-[var(--bg-card)]">
-              {kredite?.map((kredit: any) => (
+              {kredite?.map((kredit) => (
                 <tr
                   key={kredit.id}
                   className="cursor-pointer hover:bg-[var(--bg-card-hover)]"

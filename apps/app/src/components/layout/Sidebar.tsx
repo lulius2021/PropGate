@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import {
   LayoutDashboard,
@@ -76,14 +76,15 @@ const STORAGE_KEY = "propgate_sidebar_collapsed";
 
 export function Sidebar({ userInitials, userName }: { userInitials?: string; userName?: string }) {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
-
-  useEffect(() => {
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window === "undefined") return false;
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored !== null) setCollapsed(stored === "true");
-    } catch {}
-  }, []);
+      return stored === "true";
+    } catch {
+      return false;
+    }
+  });
 
   const toggleCollapsed = () => {
     const next = !collapsed;

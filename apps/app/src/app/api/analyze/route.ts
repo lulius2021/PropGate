@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Nicht angemeldet" }, { status: 401 });
     }
 
-    const user = session.user as any;
+    const user = session.user as { id: string; tenantId: string };
     const userId = user.id as string;
     const tenantId = user.tenantId as string;
 
@@ -194,7 +194,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Nicht angemeldet" }, { status: 401 });
     }
 
-    const user = session.user as any;
+    const user = session.user as { id: string; tenantId: string };
     const userId = user.id as string;
 
     const url = new URL(req.url);

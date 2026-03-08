@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense, useEffect } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
@@ -70,13 +70,11 @@ function formatPhone(raw: string) {
 
 // ── PaymentStep component (shown after registration for paid plans) ──
 function PaymentStep({
-  clientSecret,
   email,
   password,
   onSuccess,
   onError,
 }: {
-  clientSecret: string;
   email: string;
   password: string;
   onSuccess: () => void;
@@ -250,7 +248,6 @@ function RegisterForm() {
           }}
         >
           <PaymentStep
-            clientSecret={clientSecret}
             email={form.email}
             password={form.password}
             onSuccess={() => { router.push("/dashboard"); router.refresh(); }}

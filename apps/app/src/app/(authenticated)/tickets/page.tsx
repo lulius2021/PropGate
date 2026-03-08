@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { PlanLimitReached } from "@/components/ui/PlanLimitReached";
@@ -73,7 +73,8 @@ const KATEGORIE_LABELS: Record<string, string> = {
 
 export default function TicketsPage() {
   const router = useRouter();
-  const [statusFilter, setStatusFilter] = useState<string | undefined>("AKTUELL");
+  type TicketStatusFilter = "AKTUELL" | "ERFASST" | "IN_BEARBEITUNG" | "ZUR_PRUEFUNG" | "ABGESCHLOSSEN" | "BEAUFTRAGT" | "TERMIN_VEREINBART" | "IN_ARBEIT" | "RUECKFRAGE" | "ABGERECHNET" | undefined;
+  const [statusFilter, setStatusFilter] = useState<TicketStatusFilter>("AKTUELL");
   const [sortBy, setSortBy] = useState<"prioritaet" | "createdAt">("createdAt");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -85,7 +86,7 @@ export default function TicketsPage() {
   const { data: einheiten } = trpc.einheiten.list.useQuery({});
 
   const { data: ticketsRaw, isLoading, error } = trpc.tickets.list.useQuery({
-    status: statusFilter as any,
+    status: statusFilter,
   });
 
   const PRIO_ORDER: Record<string, number> = { KRITISCH: 0, HOCH: 1, MITTEL: 2, NIEDRIG: 3 };
@@ -103,7 +104,7 @@ export default function TicketsPage() {
 
   // Form Hook
   const form = useForm<CreateTicketInput>({
-    resolver: zodResolver(createTicketSchema as any),
+    resolver: zodResolver(createTicketSchema),
     defaultValues: {
       titel: "",
       beschreibung: "",
@@ -111,6 +112,9 @@ export default function TicketsPage() {
       prioritaet: "MITTEL",
     },
   });
+
+  const watchedKategorie = useWatch({ control: form.control, name: "kategorie" });
+  const watchedPrioritaet = useWatch({ control: form.control, name: "prioritaet" });
 
   // Create Mutation
   const createMutation = trpc.tickets.create.useMutation({
@@ -193,7 +197,7 @@ export default function TicketsPage() {
     }
   };
 
-  const getSLABadge = (ticket: any) => {
+  const getSLABadge = (ticket: { slaFaelligkeitDatum?: string | Date | null }) => {
     if (!ticket.slaFaelligkeitDatum) return null;
     const now = new Date();
     const sla = new Date(ticket.slaFaelligkeitDatum);
@@ -373,13 +377,15 @@ export default function TicketsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--border)] bg-[var(--bg-card)]">
-              {tickets?.map((ticket: any) => (
+              {tickets?.map((ticket) => {
+                const count = (ticket as typeof ticket & { _count?: { kommentare: number; dokumente: number } })._count;
+                return (
                 <tr key={ticket.id} className="hover:bg-[var(--bg-card-hover)] cursor-pointer" onClick={() => router.push(`/tickets/${ticket.id}`)}>
                   <td className="px-6 py-4">
                     <div className="font-medium text-[var(--text-primary)]">{ticket.titel}</div>
-                    {ticket._count.kommentare > 0 && (
+                    {count && count.kommentare > 0 && (
                       <div className="text-xs text-[var(--text-secondary)]">
-                        {ticket._count.kommentare} Kommentar(e)
+                        {count.kommentare} Kommentar(e)
                       </div>
                     )}
                   </td>
@@ -431,7 +437,8 @@ export default function TicketsPage() {
                     </Link>
                   </td>
                 </tr>
-              ))}
+              );
+              })}
             </tbody>
           </table>
         </div>
@@ -484,9 +491,9 @@ export default function TicketsPage() {
                   Kategorie *
                 </label>
                 <Select
-                  value={form.watch("kategorie")}
+                  value={watchedKategorie}
                   onValueChange={(value) =>
-                    form.setValue("kategorie", value as any)
+                    form.setValue("kategorie", value as CreateTicketInput["kategorie"])
                   }
                 >
                   <SelectTrigger className="bg-[var(--bg-card)] text-[var(--text-primary)] border-[var(--border)]">
@@ -520,9 +527,9 @@ export default function TicketsPage() {
                   Priorität *
                 </label>
                 <Select
-                  value={form.watch("prioritaet")}
+                  value={watchedPrioritaet}
                   onValueChange={(value) =>
-                    form.setValue("prioritaet", value as any)
+                    form.setValue("prioritaet", value as CreateTicketInput["prioritaet"])
                   }
                 >
                   <SelectTrigger className="bg-[var(--bg-card)] text-[var(--text-primary)] border-[var(--border)]">

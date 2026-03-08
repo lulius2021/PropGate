@@ -83,10 +83,10 @@ export function DokumentUploadModal({ open, onClose, onSuccess }: Props) {
       const base64 = (reader.result as string).split(",")[1];
       uploadMutation.mutate({
         dateiname: file.name,
-        mimeType: file.type as any,
+        mimeType: file.type as "image/png" | "image/jpeg" | "image/webp" | "application/pdf" | "application/vnd.openxmlformats-officedocument.wordprocessingml.document" | "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" | "text/csv",
         dateiinhalt: base64,
         groesse: file.size,
-        typ: typ as any,
+        typ: typ as "RECHNUNG" | "MIETVERTRAG" | "MAHNUNG" | "ZAEHLERABLESUNG" | "DARLEHEN" | "SONSTIGES",
         objektId: objektId || undefined,
         einheitId: einheitId || undefined,
         notiz: notiz || undefined,
@@ -181,7 +181,7 @@ export function DokumentUploadModal({ open, onClose, onSuccess }: Props) {
                 className="w-full rounded-lg border border-[var(--border)] px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
               >
                 <option value="">-- Kein Objekt --</option>
-                {objekte?.map((o: any) => (
+                {objekte?.map((o) => (
                   <option key={o.id} value={o.id}>{o.bezeichnung}</option>
                 ))}
               </select>
@@ -197,8 +197,8 @@ export function DokumentUploadModal({ open, onClose, onSuccess }: Props) {
                   className="w-full rounded-lg border border-[var(--border)] px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
                 >
                   <option value="">-- Alle Einheiten --</option>
-                  {einheiten?.map((e: any) => (
-                    <option key={e.id} value={e.id}>{e.einheitNr}</option>
+                  {einheiten?.map((ein) => (
+                    <option key={ein.id} value={ein.id}>{ein.einheitNr}</option>
                   ))}
                 </select>
               </div>

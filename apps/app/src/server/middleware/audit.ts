@@ -18,8 +18,8 @@ export async function logAudit({
   aktion: string;
   entitaet: string;
   entitaetId: string;
-  altWert?: any;
-  neuWert?: any;
+  altWert?: unknown;
+  neuWert?: unknown;
 }) {
   try {
     await db.auditLog.create({

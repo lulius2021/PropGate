@@ -212,7 +212,7 @@ export default function KreditDetailPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)] bg-[var(--bg-card)]">
-                {kredit.sondertilgungen.map((st: any) => (
+                {kredit.sondertilgungen.map((st) => (
                   <tr key={st.id}>
                     <td className="px-6 py-4 text-sm text-[var(--text-primary)]">
                       {new Date(st.datum).toLocaleDateString("de-DE")}
@@ -325,7 +325,7 @@ export default function KreditDetailPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border)] bg-[var(--bg-card)]">
-                  {tilgungsplanData.plan.map((eintrag: any, index: number) => (
+                  {tilgungsplanData.plan.map((eintrag, index) => (
                     <tr
                       key={index}
                       className={

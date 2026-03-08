@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { trpc } from "@/lib/trpc/client";
 
 interface MieterZuObjektHinzufuegenModalProps {
@@ -65,57 +65,56 @@ export function MieterZuObjektHinzufuegenModal({
   const createMieterMutation = trpc.mieter.create.useMutation();
   const createVertragMutation = trpc.vertraege.create.useMutation();
 
-  // Kautions-Vorschlag: 3× Kaltmiete
-  useEffect(() => {
-    if (formData.kaltmiete && !kautionManuell) {
-      const vorschlag = (parseFloat(formData.kaltmiete) * 3).toFixed(2);
-      setFormData(prev => ({ ...prev, kaution: vorschlag }));
-    }
-  }, [formData.kaltmiete]);
+  // Kautions-Vorschlag: 3x Kaltmiete (derived at render time)
+  const effectiveKaution = !kautionManuell && formData.kaltmiete
+    ? (parseFloat(formData.kaltmiete) * 3).toFixed(2)
+    : formData.kaution;
 
   // Reset form when modal closes
-  useEffect(() => {
-    if (!isOpen) {
-      setActiveTab("mieter");
-      setKautionManuell(false);
-      setFormData({
-        typ: "PRIVAT",
-        anrede: "",
-        titel: "",
-        vorname: "",
-        nachname: "",
-        firma: "",
-        geburtsdatum: "",
-        staatsangehoerigkeit: "",
-        strasse: "",
-        hausnummer: "",
-        plz: "",
-        ort: "",
-        land: "Deutschland",
-        telefonMobil: "",
-        telefonFestnetz: "",
-        email: "",
-        kommunikationskanal: "",
-        notfallkontaktName: "",
-        notfallkontaktBeziehung: "",
-        notfallkontaktTelefon: "",
-        ausweisart: "",
-        ausweisnummer: "",
-        bonitaetGeprueft: false,
-        bonitaetDatum: "",
-        datenschutzHinweisUebergeben: false,
-        datenschutzDatum: "",
-        notizen: "",
-        einheitId: "",
-        einzugsdatum: new Date().toISOString().split("T")[0],
-        kaltmiete: "",
-        bkVorauszahlung: "",
-        hkVorauszahlung: "",
-        kaution: "",
-        vertragsnotizen: "",
-      });
-    }
-  }, [isOpen]);
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  if (prevIsOpen && !isOpen) {
+    setActiveTab("mieter");
+    setKautionManuell(false);
+    setFormData({
+      typ: "PRIVAT",
+      anrede: "",
+      titel: "",
+      vorname: "",
+      nachname: "",
+      firma: "",
+      geburtsdatum: "",
+      staatsangehoerigkeit: "",
+      strasse: "",
+      hausnummer: "",
+      plz: "",
+      ort: "",
+      land: "Deutschland",
+      telefonMobil: "",
+      telefonFestnetz: "",
+      email: "",
+      kommunikationskanal: "",
+      notfallkontaktName: "",
+      notfallkontaktBeziehung: "",
+      notfallkontaktTelefon: "",
+      ausweisart: "",
+      ausweisnummer: "",
+      bonitaetGeprueft: false,
+      bonitaetDatum: "",
+      datenschutzHinweisUebergeben: false,
+      datenschutzDatum: "",
+      notizen: "",
+      einheitId: "",
+      einzugsdatum: new Date().toISOString().split("T")[0],
+      kaltmiete: "",
+      bkVorauszahlung: "",
+      hkVorauszahlung: "",
+      kaution: "",
+      vertragsnotizen: "",
+    });
+  }
+  if (isOpen !== prevIsOpen) {
+    setPrevIsOpen(isOpen);
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -160,7 +159,7 @@ export function MieterZuObjektHinzufuegenModal({
         kaltmiete: parseFloat(formData.kaltmiete) || 0,
         bkVorauszahlung: parseFloat(formData.bkVorauszahlung) || 0,
         hkVorauszahlung: parseFloat(formData.hkVorauszahlung) || 0,
-        kaution: formData.kaution ? parseFloat(formData.kaution) : undefined,
+        kaution: effectiveKaution ? parseFloat(effectiveKaution) : undefined,
         notizen: formData.vertragsnotizen || undefined,
       });
 
@@ -241,7 +240,7 @@ export function MieterZuObjektHinzufuegenModal({
                           type="radio"
                           value="PRIVAT"
                           checked={formData.typ === "PRIVAT"}
-                          onChange={(e) => setFormData({ ...formData, typ: e.target.value as any })}
+                          onChange={(e) => setFormData({ ...formData, typ: e.target.value as "PRIVAT" | "GESCHAEFTLICH" })}
                           className="mr-2"
                         />
                         Privat
@@ -251,7 +250,7 @@ export function MieterZuObjektHinzufuegenModal({
                           type="radio"
                           value="GESCHAEFTLICH"
                           checked={formData.typ === "GESCHAEFTLICH"}
-                          onChange={(e) => setFormData({ ...formData, typ: e.target.value as any })}
+                          onChange={(e) => setFormData({ ...formData, typ: e.target.value as "PRIVAT" | "GESCHAEFTLICH" })}
                           className="mr-2"
                         />
                         Geschäftlich
@@ -468,12 +467,15 @@ export function MieterZuObjektHinzufuegenModal({
                       required
                     >
                       <option value="">Bitte wählen Sie eine Einheit</option>
-                      {verfuegbareEinheiten.map((einheit) => (
-                        <option key={einheit.id} value={einheit.id}>
-                          Einheit {einheit.einheitNr} - {(einheit as any).bezeichnung || "Keine Bezeichnung"}
-                          {(einheit as any).wohnflaeche && ` (${(einheit as any).wohnflaeche} m²)`}
-                        </option>
-                      ))}
+                      {verfuegbareEinheiten.map((einheit) => {
+                        const ext = einheit as typeof einheit & { bezeichnung?: string; wohnflaeche?: number };
+                        return (
+                          <option key={einheit.id} value={einheit.id}>
+                            Einheit {einheit.einheitNr} - {ext.bezeichnung || "Keine Bezeichnung"}
+                            {ext.wohnflaeche ? ` (${ext.wohnflaeche} m²)` : ""}
+                          </option>
+                        );
+                      })}
                     </select>
                     {verfuegbareEinheiten.length === 0 && (
                       <p className="mt-1 text-sm text-red-400">
@@ -547,7 +549,7 @@ export function MieterZuObjektHinzufuegenModal({
                         <input
                           type="number"
                           step="0.01"
-                          value={formData.kaution}
+                          value={effectiveKaution}
                           onChange={(e) => {
                             setKautionManuell(true);
                             setFormData({ ...formData, kaution: e.target.value });

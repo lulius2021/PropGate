@@ -1,15 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { MessageSquareHeart } from "lucide-react";
 import { FeedbackModal } from "./FeedbackModal";
 
-export function FeedbackPopup() {
-  const [visible, setVisible] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-
-  useEffect(() => {
-    // Only run once per browser session
+function computeInitialVisibility(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
     const alreadyCounted = sessionStorage.getItem("pg_session_counted");
     let loginCount = parseInt(localStorage.getItem("pg_login_count") ?? "0", 10);
 
@@ -22,10 +19,15 @@ export function FeedbackPopup() {
     const feedbackDone = localStorage.getItem("pg_feedback_done") === "true";
     const nextAt = parseInt(localStorage.getItem("pg_feedback_next_at") ?? "3", 10);
 
-    if (!feedbackDone && loginCount === nextAt) {
-      setVisible(true);
-    }
-  }, []);
+    return !feedbackDone && loginCount === nextAt;
+  } catch {
+    return false;
+  }
+}
+
+export function FeedbackPopup() {
+  const [visible, setVisible] = useState(computeInitialVisibility);
+  const [showModal, setShowModal] = useState(false);
 
   if (!visible) return null;
 

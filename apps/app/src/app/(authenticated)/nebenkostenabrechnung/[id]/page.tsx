@@ -114,7 +114,7 @@ export default function NKADetailPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
-                {nka.positionen.map((p: any) => (
+                {nka.positionen.map((p) => (
                   <tr key={p.id} className="hover:bg-[var(--bg-card-hover)]">
                     <td className="px-6 py-4 font-medium text-[var(--text-primary)]">{p.kostenartBezeichnung}</td>
                     <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">{p.umlageschluessel}</td>
@@ -145,7 +145,7 @@ export default function NKADetailPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
-                {nka.mieterpositionen.map((mp: any) => {
+                {nka.mieterpositionen.map((mp) => {
                   const diff = parseFloat(mp.differenz.toString());
                   return (
                     <tr key={mp.id} className="hover:bg-[var(--bg-card-hover)]">

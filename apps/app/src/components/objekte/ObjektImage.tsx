@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 interface ObjektImageProps {
   bildUrl?: string | null;
   alt: string;
@@ -41,11 +43,13 @@ export function ObjektImage({ bildUrl, alt, className = "", size = "medium" }: O
 
   if (bildUrl) {
     return (
-      <div className={baseClasses}>
-        <img
+      <div className={`${baseClasses} relative`}>
+        <Image
           src={bildUrl}
           alt={alt}
-          className="h-full w-full object-cover"
+          fill
+          className="object-cover"
+          unoptimized
         />
       </div>
     );

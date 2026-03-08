@@ -129,7 +129,7 @@ export default function VertraegePage() {
     }
   };
 
-  const getMieterName = (mieter: any) => {
+  const getMieterName = (mieter: { typ?: string | null; firma?: string | null; vorname?: string | null; nachname: string }) => {
     if (mieter.typ === "GEWERBE" && mieter.firma) return mieter.firma;
     return `${mieter.vorname || ""} ${mieter.nachname}`.trim();
   };

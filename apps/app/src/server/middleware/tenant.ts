@@ -36,7 +36,7 @@ export function createTenantMiddleware(tenantId: string) {
           async create({ args, query, model }) {
             const modelName = model;
             if (hasTenantIdField(modelName)) {
-              args.data = { ...args.data, tenantId } as any;
+              (args.data as Record<string, unknown>).tenantId = tenantId;
             }
             return query(args);
           },
@@ -44,9 +44,9 @@ export function createTenantMiddleware(tenantId: string) {
             const modelName = model;
             if (hasTenantIdField(modelName)) {
               if (Array.isArray(args.data)) {
-                args.data = args.data.map((item) => ({ ...item, tenantId })) as any;
+                args.data = args.data.map((item) => ({ ...item, tenantId })) as typeof args.data;
               } else {
-                args.data = { ...args.data, tenantId } as any;
+                (args.data as Record<string, unknown>).tenantId = tenantId;
               }
             }
             return query(args);

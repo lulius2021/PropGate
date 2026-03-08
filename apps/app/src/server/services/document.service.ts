@@ -20,13 +20,13 @@ export type TemplateType =
 
 interface GeneratePDFParams {
   templateType: TemplateType;
-  data: any;
+  data: Record<string, unknown>;
   tenantId: string;
 }
 
 interface GenerateDOCXParams {
   templateType: TemplateType;
-  data: any;
+  data: Record<string, unknown>;
   tenantId: string;
 }
 
@@ -75,9 +75,9 @@ function registerHelpers() {
   });
 
   // Decimal Formatter
-  Handlebars.registerHelper("formatDecimal", (value: any) => {
+  Handlebars.registerHelper("formatDecimal", (value: unknown) => {
     if (value === undefined || value === null) return "0,00";
-    const num = typeof value === "number" ? value : parseFloat(value.toString());
+    const num = typeof value === "number" ? value : parseFloat(String(value));
     return new Intl.NumberFormat("de-DE", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -88,11 +88,10 @@ function registerHelpers() {
 /**
  * Generiert ein PDF-Dokument
  */
-export async function generierePDF({
-  templateType,
-  data,
-  tenantId,
-}: GeneratePDFParams): Promise<Buffer> {
+export async function generierePDF(
+  params: GeneratePDFParams
+): Promise<Buffer> {
+  const { templateType, data } = params;
   // Helpers registrieren
   registerHelpers();
 
@@ -137,11 +136,10 @@ export async function generierePDF({
  * Generiert ein DOCX-Dokument (vereinfachte Version)
  * Für komplexe Layouts sollte ein Template-System wie docx-templates verwendet werden
  */
-export async function generiereDOCX({
-  templateType,
-  data,
-  tenantId,
-}: GenerateDOCXParams): Promise<Buffer> {
+export async function generiereDOCX(
+  params: GenerateDOCXParams
+): Promise<Buffer> {
+  const { templateType } = params;
   // Vereinfachte DOCX-Generierung
   // Für Produktionseinsatz sollte ein Template-basierter Ansatz verwendet werden
 

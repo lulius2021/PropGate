@@ -21,9 +21,9 @@ type Einheit = {
   objekt?: { bezeichnung: string } | null;
   mietverhaeltnisse?: {
     id: string;
-    kaltmiete: any;
-    einzugsdatum?: any;
-    auszugsdatum?: any;
+    kaltmiete: number | string;
+    einzugsdatum?: string | Date | null;
+    auszugsdatum?: string | Date | null;
   }[];
 };
 
@@ -92,7 +92,7 @@ export default function EinheitenPage() {
   };
 
   const getStatusLabel = (status: string, einheit?: Einheit) => {
-    const fmt = (d: any) => d ? new Date(d).toLocaleDateString("de-DE") : "";
+    const fmt = (d: string | Date) => d ? new Date(d).toLocaleDateString("de-DE") : "";
     const mv = einheit?.mietverhaeltnisse?.[0];
     switch (status) {
       case "VERMIETET": return "Vermietet";
@@ -260,7 +260,7 @@ export default function EinheitenPage() {
                   </p>
                 </div>
                 <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(einheit.status)}`}>
-                  {getStatusLabel(einheit.status, einheit as Einheit)}
+                  {getStatusLabel(einheit.status, einheit as unknown as Einheit)}
                 </span>
               </div>
               <div className="space-y-2 text-sm">
@@ -308,7 +308,7 @@ export default function EinheitenPage() {
                   Details ansehen
                 </button>
                 <button
-                  onClick={() => setEditingEinheit(einheit as Einheit)}
+                  onClick={() => setEditingEinheit(einheit as unknown as Einheit)}
                   className="flex items-center gap-1.5 rounded-md border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]"
                 >
                   <Pencil className="h-3.5 w-3.5" />

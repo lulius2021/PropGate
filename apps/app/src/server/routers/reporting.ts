@@ -89,7 +89,7 @@ export const reportingRouter = router({
       });
 
       // Offene Mahnungen
-      const offeneMahnungenWhere: any = { tenantId, status: "OFFEN" };
+      const offeneMahnungenWhere: Record<string, unknown> = { tenantId, status: "OFFEN" };
       if (input?.objektId) {
         offeneMahnungenWhere.mietverhaeltnis = {
           einheit: { objektId: input.objektId },

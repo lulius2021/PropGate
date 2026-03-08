@@ -2,7 +2,6 @@
 
 import { trpc } from "@/lib/trpc/client";
 import Link from "next/link";
-import { useState } from "react";
 
 const STATUS_LABELS: Record<string, string> = {
   ENTWURF: "Entwurf",
@@ -61,7 +60,7 @@ export default function NebenkostenabrechnungPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--border)] bg-[var(--bg-card)]">
-              {nkAs.map((nka: any) => (
+              {nkAs.map((nka) => (
                 <tr key={nka.id} className="hover:bg-[var(--bg-card-hover)]">
                   <td className="px-6 py-4 font-medium text-[var(--text-primary)]">{nka.objekt?.bezeichnung}</td>
                   <td className="px-6 py-4 text-sm text-[var(--text-primary)] font-semibold">{nka.abrechnungsjahr}</td>
@@ -69,7 +68,7 @@ export default function NebenkostenabrechnungPage() {
                     {new Date(nka.vonDatum).toLocaleDateString("de-DE")} – {new Date(nka.bisDatum).toLocaleDateString("de-DE")}
                   </td>
                   <td className="px-6 py-4 text-right text-sm font-medium text-[var(--text-primary)]">
-                    {nka.gesamtkosten ? `${parseFloat(nka.gesamtkosten).toFixed(2)} €` : "—"}
+                    {nka.gesamtkosten ? `${parseFloat(String(nka.gesamtkosten)).toFixed(2)} €` : "—"}
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${STATUS_COLORS[nka.status] || "bg-[var(--bg-card-hover)] text-[var(--text-secondary)]"}`}>

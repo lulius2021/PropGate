@@ -51,8 +51,8 @@ export default function MieterDetailPage() {
   }
 
   const displayName = mieter.firma || `${mieter.vorname || ""} ${mieter.nachname}`.trim();
-  const aktiveMietverhaeltnisse = mieter.mietverhaeltnisse?.filter((mv: any) => !mv.auszugsdatum) || [];
-  const fruehereMietverhaeltnisse = mieter.mietverhaeltnisse?.filter((mv: any) => mv.auszugsdatum) || [];
+  const aktiveMietverhaeltnisse = mieter.mietverhaeltnisse?.filter((mv) => !mv.auszugsdatum) || [];
+  const fruehereMietverhaeltnisse = mieter.mietverhaeltnisse?.filter((mv) => mv.auszugsdatum) || [];
 
   return (
     <div className="space-y-6">
@@ -184,7 +184,7 @@ export default function MieterDetailPage() {
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">Aktive Mietverhältnisse</h2>
           </div>
           <div className="divide-y divide-[var(--border)]">
-            {aktiveMietverhaeltnisse.map((mv: any) => (
+            {aktiveMietverhaeltnisse.map((mv) => (
               <div key={mv.id} className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
@@ -210,19 +210,19 @@ export default function MieterDetailPage() {
                   <div>
                     <span className="text-[var(--text-secondary)]">Kaltmiete</span>
                     <div className="font-semibold text-[var(--text-primary)]">
-                      {parseFloat(mv.kaltmiete).toFixed(2)} €
+                      {parseFloat(String(mv.kaltmiete)).toFixed(2)} €
                     </div>
                   </div>
                   <div>
                     <span className="text-[var(--text-secondary)]">Nebenkosten</span>
                     <div className="font-semibold text-[var(--text-primary)]">
-                      {parseFloat(mv.bkVorauszahlung).toFixed(2)} €
+                      {parseFloat(String(mv.bkVorauszahlung)).toFixed(2)} €
                     </div>
                   </div>
                   <div>
                     <span className="text-[var(--text-secondary)]">Warmmiete</span>
                     <div className="font-semibold text-blue-400">
-                      {(parseFloat(mv.kaltmiete) + parseFloat(mv.bkVorauszahlung) + parseFloat(mv.hkVorauszahlung)).toFixed(2)} €
+                      {(parseFloat(String(mv.kaltmiete)) + parseFloat(String(mv.bkVorauszahlung)) + parseFloat(String(mv.hkVorauszahlung))).toFixed(2)} €
                     </div>
                   </div>
                 </div>
@@ -239,7 +239,7 @@ export default function MieterDetailPage() {
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">Frühere Mietverhältnisse</h2>
           </div>
           <div className="divide-y divide-[var(--border)]">
-            {fruehereMietverhaeltnisse.map((mv: any) => (
+            {fruehereMietverhaeltnisse.map((mv) => (
               <div key={mv.id} className="p-6 bg-[var(--bg-page)]">
                 <div className="flex items-start justify-between mb-4">
                   <div>
@@ -247,7 +247,7 @@ export default function MieterDetailPage() {
                       {mv.einheit.objekt?.bezeichnung} - Einheit {mv.einheit.einheitNr}
                     </h3>
                     <p className="text-sm text-[var(--text-secondary)] mt-1">
-                      {new Date(mv.einzugsdatum).toLocaleDateString("de-DE")} - {new Date(mv.auszugsdatum).toLocaleDateString("de-DE")}
+                      {new Date(mv.einzugsdatum).toLocaleDateString("de-DE")} - {mv.auszugsdatum ? new Date(mv.auszugsdatum).toLocaleDateString("de-DE") : "unbefristet"}
                     </p>
                   </div>
                   <span className="inline-flex items-center rounded-full bg-[var(--bg-card-hover)] px-2.5 py-0.5 text-xs font-medium text-[var(--text-secondary)]">
@@ -259,13 +259,13 @@ export default function MieterDetailPage() {
                   <div>
                     <span className="text-[var(--text-secondary)]">Dauer</span>
                     <div className="font-semibold text-[var(--text-secondary)]">
-                      {Math.round((new Date(mv.auszugsdatum).getTime() - new Date(mv.einzugsdatum).getTime()) / (1000 * 60 * 60 * 24 * 30))} Monate
+                      {mv.auszugsdatum ? Math.round((new Date(mv.auszugsdatum).getTime() - new Date(mv.einzugsdatum).getTime()) / (1000 * 60 * 60 * 24 * 30)) : "—"} Monate
                     </div>
                   </div>
                   <div>
                     <span className="text-[var(--text-secondary)]">Letzte Kaltmiete</span>
                     <div className="font-semibold text-[var(--text-secondary)]">
-                      {parseFloat(mv.kaltmiete).toFixed(2)} €
+                      {parseFloat(String(mv.kaltmiete)).toFixed(2)} €
                     </div>
                   </div>
                 </div>
@@ -310,7 +310,7 @@ export default function MieterDetailPage() {
           {/* Timeline */}
           {notizen && notizen.length > 0 ? (
             <div className="space-y-3">
-              {notizen.map((n: any) => (
+              {notizen.map((n) => (
                 <div key={n.id} className="flex gap-3">
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-500/15 text-xs font-semibold text-blue-400">
                     {(n.user?.name || n.user?.email || "?")[0]?.toUpperCase()}

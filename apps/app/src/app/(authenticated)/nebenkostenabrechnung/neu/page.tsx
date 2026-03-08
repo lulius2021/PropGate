@@ -49,7 +49,7 @@ export default function NKANeuPage() {
           <select required value={form.objektId} onChange={(e) => setForm({ ...form, objektId: e.target.value })}
             className="mt-1 block w-full rounded border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">Objekt auswählen...</option>
-            {objekte?.map((o: any) => (
+            {objekte?.map((o) => (
               <option key={o.id} value={o.id}>{o.bezeichnung} — {o.strasse}, {o.ort}</option>
             ))}
           </select>

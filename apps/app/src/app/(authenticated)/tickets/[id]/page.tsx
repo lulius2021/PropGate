@@ -331,7 +331,7 @@ export default function TicketDetailPage() {
 
         {ticket.kommentare && ticket.kommentare.length > 0 ? (
           <div className="space-y-3 mb-4">
-            {ticket.kommentare.map((k: any) => (
+            {ticket.kommentare.map((k) => (
               <div
                 key={k.id}
                 className="rounded border border-[var(--border)] bg-[var(--bg-page)] p-3"

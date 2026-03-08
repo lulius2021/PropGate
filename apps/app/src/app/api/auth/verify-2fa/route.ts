@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const userId = (session.user as any).id;
+    const userId = (session.user as { id: string }).id;
     const user = await db.user.findUnique({
       where: { id: userId },
       select: {
@@ -78,9 +78,9 @@ export async function POST(req: NextRequest) {
         id: userId,
         email: session.user.email,
         name: session.user.name,
-        tenantId: (session.user as any).tenantId,
-        tenantName: (session.user as any).tenantName,
-        role: (session.user as any).role,
+        tenantId: (session.user as { tenantId: string }).tenantId,
+        tenantName: (session.user as { tenantName: string }).tenantName,
+        role: (session.user as { role: string }).role,
         needsTwoFactor: true,
         twoFactorVerified: true,
       },

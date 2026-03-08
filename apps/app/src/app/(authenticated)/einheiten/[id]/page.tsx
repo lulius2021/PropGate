@@ -150,7 +150,7 @@ export default function EinheitDetailPage() {
             <div>
               <dt className="text-sm text-[var(--text-secondary)]">Lage</dt>
               <dd className="mt-1 text-sm font-medium text-[var(--text-primary)]">
-                {(einheit as any).lage ?? "–"}
+                {(einheit as { lage?: string | null }).lage ?? "–"}
               </dd>
             </div>
             <div>
@@ -284,7 +284,7 @@ export default function EinheitDetailPage() {
                 typ: einheit.typ as "WOHNUNG" | "GEWERBE" | "STELLPLATZ" | "LAGER",
                 flaeche: einheit.flaeche.toString(),
                 zimmer: einheit.zimmer,
-                lage: (einheit as any).lage ?? null,
+                lage: (einheit as { lage?: string | null }).lage ?? null,
                 eurProQm: einheit.eurProQm?.toString() ?? null,
                 ausstattung: einheit.ausstattung,
               }

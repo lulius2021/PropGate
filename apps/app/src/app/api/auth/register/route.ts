@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { name, company, phone: _phone, email, password, plan, billing, referralCode } =
+    const { name, company, email, password, plan, billing, referralCode } =
       await req.json();
 
     if (!name || !email || !password) {

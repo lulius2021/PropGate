@@ -66,12 +66,10 @@ function berechneVerzugszinsen(
 /**
  * Erstellt eine Mahnung für ein Mietverhältnis
  */
-export async function ersteMahnung({
-  mietverhaeltnisId,
-  mahnstufe,
-  tenantId,
-  userId,
-}: ErsteMahnungParams) {
+export async function ersteMahnung(
+  params: ErsteMahnungParams
+) {
+  const { mietverhaeltnisId, mahnstufe, tenantId } = params;
   // Mietverhältnis abrufen
   const mietverhaeltnis = await db.mietverhaeltnis.findUnique({
     where: { id: mietverhaeltnisId },
@@ -311,11 +309,6 @@ export async function ermittleMahnvorschlaege(tenantId: string) {
       }
     } else {
       // Mahnung vorhanden, Eskalation prüfen
-      const tageSeitLetzterMahnung = Math.floor(
-        (heute.getTime() - new Date(letzteMahnung.mahnDatum).getTime()) /
-          (1000 * 60 * 60 * 24)
-      );
-
       if (letzteMahnung.mahnstufe === "ERINNERUNG" && tageUeberfaellig >= 14) {
         empfohleneStufe = "MAHNUNG_1";
       } else if (

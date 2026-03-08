@@ -19,10 +19,10 @@ export default function MieterPage() {
 
   // Filter: Aktive vs. Frühere Mieter
   const aktiveMieter = mieter?.filter((m) =>
-    m.mietverhaeltnisse.some((mv: any) => !mv.auszugsdatum)
+    m.mietverhaeltnisse.some((mv) => !mv.auszugsdatum)
   );
   const fruehereMieter = mieter?.filter((m) =>
-    m.mietverhaeltnisse.every((mv: any) => mv.auszugsdatum)
+    m.mietverhaeltnisse.every((mv) => mv.auszugsdatum)
   );
 
   const displayMieter =
@@ -40,7 +40,7 @@ export default function MieterPage() {
     );
 
     // Filter nach ausgewählten Objekten
-    const matchesObjekt = selectedObjekte.length === 0 || m.mietverhaeltnisse.some((mv: any) =>
+    const matchesObjekt = selectedObjekte.length === 0 || m.mietverhaeltnisse.some((mv) =>
       mv.einheit?.objektId && selectedObjekte.includes(mv.einheit.objektId)
     );
 
@@ -55,12 +55,12 @@ export default function MieterPage() {
     );
   };
 
-  const getDisplayName = (m: any) => {
+  const getDisplayName = (m: { firma?: string | null; vorname?: string | null; nachname: string }) => {
     if (m.firma) return m.firma;
     return `${m.vorname || ""} ${m.nachname}`.trim();
   };
 
-  const getMietverhaeltnis = (m: any) => {
+  const getMietverhaeltnis = (m: NonNullable<typeof mieter>[number]) => {
     return m.mietverhaeltnisse[0]; // Aktuellstes Mietverhältnis
   };
 
@@ -107,7 +107,7 @@ export default function MieterPage() {
               {objekte.map((objekt) => {
                 const isSelected = selectedObjekte.includes(objekt.id);
                 const mieterCount = mieter?.filter((m) =>
-                  m.mietverhaeltnisse.some((mv: any) => mv.einheit?.objektId === objekt.id)
+                  m.mietverhaeltnisse.some((mv) => mv.einheit?.objektId === objekt.id)
                 ).length || 0;
 
                 return (

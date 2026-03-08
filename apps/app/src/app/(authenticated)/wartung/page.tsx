@@ -70,7 +70,7 @@ export default function WartungPage() {
   // Filtered list
   const filteredAufgaben = useMemo(() => {
     if (!aufgaben) return [];
-    return aufgaben.filter((a: any) => {
+    return aufgaben.filter((a) => {
       if (filterStatus === "offen" && a.letzteAusfuehrung) return false;
       if (filterStatus === "erledigt" && !a.letzteAusfuehrung) return false;
       if (filterObjektId && a.objektId !== filterObjektId) return false;
@@ -104,7 +104,7 @@ export default function WartungPage() {
 
   if (isLoading) return <div className="p-8">Laden...</div>;
 
-  const countErledigt = aufgaben?.filter((a: any) => a.letzteAusfuehrung).length ?? 0;
+  const countErledigt = aufgaben?.filter((a) => a.letzteAusfuehrung).length ?? 0;
   const countOffen = (aufgaben?.length ?? 0) - countErledigt;
 
   return (
@@ -258,7 +258,7 @@ export default function WartungPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--border)] bg-[var(--bg-card)]">
-              {filteredAufgaben.map((a: any) => {
+              {filteredAufgaben.map((a) => {
                 const days = daysUntil(a.naechsteFaelligkeit);
                 const istErledigt = !!a.letzteAusfuehrung;
                 return (

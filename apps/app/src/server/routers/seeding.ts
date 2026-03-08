@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { router, adminProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 
@@ -88,7 +87,7 @@ export const seedingRouter = router({
         status: "VERMIETET",
       },
     });
-    const e4 = await ctx.db.einheit.create({
+    await ctx.db.einheit.create({
       data: {
         tenantId,
         objektId: objekt1.id,
@@ -110,7 +109,7 @@ export const seedingRouter = router({
         status: "VERMIETET",
       },
     });
-    const e6 = await ctx.db.einheit.create({
+    await ctx.db.einheit.create({
       data: {
         tenantId,
         objektId: objekt2.id,
@@ -130,7 +129,7 @@ export const seedingRouter = router({
         status: "VERMIETET",
       },
     });
-    const e8 = await ctx.db.einheit.create({
+    await ctx.db.einheit.create({
       data: {
         tenantId,
         objektId: objekt3.id,

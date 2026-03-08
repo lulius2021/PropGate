@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 import { router, protectedProcedure, writeProcedure, checkObjektLimit } from "../trpc";
 import { logAudit } from "../middleware/audit";
 
@@ -124,7 +125,7 @@ export const objekteRouter = router({
         data: {
           ...input,
           tenantId: ctx.tenantId,
-        } as any,
+        } as Prisma.ObjektUncheckedCreateInput,
       });
 
       await logAudit({

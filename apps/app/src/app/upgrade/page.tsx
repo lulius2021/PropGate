@@ -55,11 +55,9 @@ type PlanId = (typeof PLANS)[number]["id"];
 type Billing = "monthly" | "annual";
 
 function PaymentStep({
-  clientSecret,
   onSuccess,
   onError,
 }: {
-  clientSecret: string;
   onSuccess: () => void;
   onError: (msg: string) => void;
 }) {
@@ -331,7 +329,6 @@ export default function UpgradePage() {
                   }}
                 >
                   <PaymentStep
-                    clientSecret={clientSecret}
                     onSuccess={() => {
                       router.push("/dashboard");
                       router.refresh();

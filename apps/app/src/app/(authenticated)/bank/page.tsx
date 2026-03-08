@@ -188,7 +188,7 @@ export default function BankPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--border)] bg-[var(--bg-card)]">
-              {zahlungen?.map((zahlung: any) => (
+              {zahlungen?.map((zahlung) => (
                 <tr key={zahlung.id} className="hover:bg-[var(--bg-card-hover)]">
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-[var(--text-secondary)]">
                     {new Date(zahlung.datum).toLocaleDateString("de-DE")}

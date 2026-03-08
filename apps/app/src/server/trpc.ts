@@ -1,5 +1,4 @@
 import { initTRPC, TRPCError } from "@trpc/server";
-import { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import superjson from "superjson";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -15,14 +14,14 @@ import {
  * Create context for tRPC requests
  * Includes session, database, and tenant information
  */
-export async function createTRPCContext(opts: FetchCreateContextFnOptions) {
+export async function createTRPCContext() {
   const session = await auth();
 
   return {
     db,
     session,
-    tenantId: (session?.user as any)?.tenantId || null,
-    userId: (session?.user as any)?.id || null,
+    tenantId: (session?.user as { tenantId?: string } | undefined)?.tenantId || null,
+    userId: (session?.user as { id?: string } | undefined)?.id || null,
   };
 }
 

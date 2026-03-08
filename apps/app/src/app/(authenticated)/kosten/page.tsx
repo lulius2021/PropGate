@@ -35,7 +35,7 @@ export default function KostenPage() {
     return <div>Laden...</div>;
   }
 
-  const getZahlungsstatusBadge = (kosten: any) => {
+  const getZahlungsstatusBadge = (kosten: { ueberfaellig?: boolean; zahlungsstatus: string }) => {
     if (kosten.ueberfaellig) {
       return (
         <Badge variant="destructive" className="text-xs">
@@ -263,7 +263,7 @@ export default function KostenPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--border)] bg-[var(--bg-card)]">
-              {kosten?.map((kost: any) => (
+              {kosten?.map((kost) => (
                 <tr
                   key={kost.id}
                   className="cursor-pointer hover:bg-[var(--bg-card-hover)]"

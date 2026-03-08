@@ -81,7 +81,7 @@ export default function ReportingPage() {
       const csvContent = [
         headers.join(";"),
         ...portfolioData.map((row) =>
-          headers.map((h) => (row as any)[h] || "").join(";")
+          headers.map((h) => (row as Record<string, unknown>)[h] || "").join(";")
         ),
       ].join("\n");
 

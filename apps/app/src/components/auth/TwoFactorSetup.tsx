@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { trpc } from "@/lib/trpc/client";
 
 type Step = "qr" | "verify" | "recovery";
@@ -84,7 +85,7 @@ export function TwoFactorSetup({ onComplete }: { onComplete: () => void }) {
           Scannen Sie den QR-Code mit Ihrer Authenticator-App (z.B. Google Authenticator, Authy).
         </p>
         <div className="flex justify-center">
-          <img src={setupData.qrCode} alt="QR-Code für 2FA" className="h-48 w-48" />
+          <Image src={setupData.qrCode} alt="QR-Code für 2FA" width={192} height={192} unoptimized />
         </div>
         <details className="rounded-lg border border-[var(--border)] p-3">
           <summary className="cursor-pointer text-sm font-medium text-[var(--text-secondary)]">

@@ -18,7 +18,7 @@ export default async function AuthenticatedLayout({
   }
 
   // 2FA enforcement: if user has 2FA enabled but hasn't verified yet, redirect
-  const user = session.user as any;
+  const user = session.user as { tenantId?: string; tenantName?: string; needsTwoFactor?: boolean; twoFactorVerified?: boolean; role?: string } | undefined;
   if (user?.needsTwoFactor && !user?.twoFactorVerified) {
     redirect("/verify-2fa");
   }
@@ -57,7 +57,7 @@ export default async function AuthenticatedLayout({
           <div className="flex h-full items-center justify-between px-6">
             <div>
               <h2 className="text-base font-semibold text-[var(--text-primary)]">
-                {(session.user as any)?.tenantName || "Dashboard"}
+                {user?.tenantName || "Dashboard"}
               </h2>
             </div>
             <div className="flex items-center gap-3">
@@ -72,7 +72,7 @@ export default async function AuthenticatedLayout({
               </div>
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-medium text-[var(--text-primary)]">{session.user?.name || session.user?.email}</p>
-                <p className="text-xs text-[var(--text-muted)]">{(session.user as any)?.role || "User"}</p>
+                <p className="text-xs text-[var(--text-muted)]">{user?.role || "User"}</p>
               </div>
               <LogoutButton />
             </div>

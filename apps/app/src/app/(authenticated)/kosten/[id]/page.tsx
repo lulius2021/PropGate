@@ -230,7 +230,7 @@ export default function KostenDetailPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)] bg-[var(--bg-card)]">
-                {kosten.zahlungen.map((zahlung: any) => (
+                {kosten.zahlungen.map((zahlung) => (
                   <tr key={zahlung.id}>
                     <td className="px-6 py-4 text-sm text-[var(--text-primary)]">
                       {new Date(zahlung.datum).toLocaleDateString("de-DE")}

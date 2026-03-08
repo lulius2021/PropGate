@@ -1,17 +1,21 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
+
+const noopSubscribe = () => () => {};
+const getTrue = () => true;
+const getFalse = () => false;
 
 export function AuthCard({ children, wide }: { children: ReactNode; wide?: boolean }) {
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    const t = document.documentElement.getAttribute('data-theme');
-    setTheme(t === 'light' ? 'light' : 'dark');
-  }, []);
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof document !== 'undefined') {
+      const t = document.documentElement.getAttribute('data-theme');
+      return t === 'light' ? 'light' : 'dark';
+    }
+    return 'dark';
+  });
+  const mounted = useSyncExternalStore(noopSubscribe, getTrue, getFalse);
 
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark';

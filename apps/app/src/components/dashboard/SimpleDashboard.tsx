@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Responsive, WidthProvider, Layout } from "react-grid-layout";
-import { Widget } from "./widgets/Widget";
+import { Widget, type DashboardData } from "./widgets/Widget";
 import { WidgetLibrary } from "./WidgetLibrary";
 import { VerlaufModal } from "./VerlaufModal";
 import { WIDGET_DEFINITIONS } from "./widgets/definitions";
@@ -24,11 +24,11 @@ interface WidgetConfig {
 }
 
 interface SimpleDashboardProps {
-  data?: any;
+  data?: DashboardData;
   isLoading?: boolean;
   objektFilter?: string;
   zeitraum?: string;
-  objekte?: any[];
+  objekte?: { id: string; bezeichnung: string }[];
   onObjektChange?: (v: string) => void;
   onZeitraumChange?: (v: string) => void;
 }
@@ -180,7 +180,7 @@ export function SimpleDashboard({ data, isLoading, objektFilter, zeitraum, objek
             className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] shadow-sm focus:border-blue-500 focus:outline-none"
           >
             <option value="">Alle Objekte</option>
-            {objekte?.map((o: any) => (
+            {objekte?.map((o) => (
               <option key={o.id} value={o.id}>{o.bezeichnung}</option>
             ))}
           </select>
@@ -246,7 +246,7 @@ export function SimpleDashboard({ data, isLoading, objektFilter, zeitraum, objek
                */
               <div key={widget.i} className={`relative ${!isEditing ? "[&>div]:pb-10" : ""}`}>
                 <Widget
-                  type={widget.type as any}
+                  type={widget.type as WidgetType}
                   size={widget.size}
                   data={data}
                   isLoading={isLoading}

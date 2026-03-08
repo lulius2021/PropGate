@@ -21,7 +21,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
 
@@ -125,10 +124,21 @@ function HorizontalBarChart({
   );
 }
 
+export interface DashboardData {
+  objekte?: number;
+  einheiten?: { gesamt: number; vermietet: number; frei: number };
+  rueckstaende?: string | number;
+  offeneTickets?: number;
+  unklareZahlungen?: number;
+  offeneMahnungen?: number;
+  offeneSollstellungen?: number;
+  [key: string]: unknown;
+}
+
 interface WidgetProps {
   type: WidgetType;
   size: WidgetSize;
-  data?: any;
+  data?: DashboardData;
   isLoading?: boolean;
 }
 
@@ -143,7 +153,6 @@ function formatCurrency(value: string | number) {
 
 export function Widget({ type, size, data, isLoading }: WidgetProps) {
   const isSmall = size === "small";
-  const isMedium = size === "medium";
   const isLarge = size === "large";
 
   // Modal state hooks
@@ -216,7 +225,7 @@ export function Widget({ type, size, data, isLoading }: WidgetProps) {
               </svg>
             </div>
           </div>
-          {!isSmall && !isLoading && data && (
+          {!isSmall && !isLoading && data?.einheiten && (
             <p className="mt-3 text-sm text-[var(--text-secondary)]">
               <span className="font-medium text-green-400">{data.einheiten.vermietet} vermietet</span>
               {" · "}
@@ -1461,11 +1470,11 @@ export function Widget({ type, size, data, isLoading }: WidgetProps) {
   const monatLabels = ["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
 
   // Filter chart data by selected range
-  const filterByZeitraum = (data: any[] | null) => {
+  const filterByZeitraum = (data: Record<string, unknown>[] | null) => {
     if (!data) return null;
     const now = new Date();
     const curMonthIdx = now.getMonth();
-    return data.filter((_: any, idx: number) => {
+    return data.filter((_: Record<string, unknown>, idx: number) => {
       const inRange = idx >= chartVon && idx <= chartBis;
       const inPast = chartJahr < currentYear || idx <= curMonthIdx;
       return inRange && inPast;
@@ -1578,7 +1587,7 @@ export function Widget({ type, size, data, isLoading }: WidgetProps) {
 
   if (type === "cashflowVerlauf") {
     const filteredRaw = filterByZeitraum(cashflowMonatlichData ?? null);
-    const monate = filteredRaw?.map((m: any) => {
+    const monate = filteredRaw?.map((m: Record<string, unknown>) => {
       const hasData = (m.einnahmen && m.einnahmen !== 0) || (m.ausgaben && m.ausgaben !== 0);
       return hasData ? m : { ...m, einnahmen: null, ausgaben: null, cashflow: null };
     }) ?? null;

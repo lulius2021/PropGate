@@ -180,8 +180,6 @@ export const dokumenteRouter = router({
       }
 
       // Collect the full version chain by walking backwards then forwards
-      const versions: typeof dokument[] = [];
-
       // Walk backwards to the root
       let current = dokument;
       while (current.vorgaenger) {

@@ -3,7 +3,8 @@
  * Handles ticket management system
  */
 
-import { router, protectedProcedure, publicProcedure, createPlanGatedProcedure } from "../trpc";
+import { router, publicProcedure, createPlanGatedProcedure } from "../trpc";
+import { Prisma, TicketStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { logAudit } from "../middleware/audit";
@@ -30,14 +31,14 @@ export const ticketsRouter = router({
     )
     .query(async ({ ctx, input }) => {
       // "AKTUELL" is a virtual filter: all tickets not ABGESCHLOSSEN or ABGERECHNET
-      const statusFilter = input?.status === "AKTUELL"
-        ? { notIn: ["ABGESCHLOSSEN", "ABGERECHNET"] as const }
-        : input?.status;
+      const statusFilter: TicketStatus | Prisma.EnumTicketStatusFilter<"Ticket"> | undefined = input?.status === "AKTUELL"
+        ? { notIn: [TicketStatus.ABGESCHLOSSEN, TicketStatus.ABGERECHNET] }
+        : input?.status as TicketStatus | undefined;
 
       return ctx.db.ticket.findMany({
         where: {
           tenantId: ctx.tenantId,
-          status: statusFilter as any,
+          status: statusFilter,
           kategorie: input?.kategorie,
           prioritaet: input?.prioritaet,
         },
@@ -285,9 +286,9 @@ export const ticketsRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const data: any = { dienstleisterId: input.dienstleisterId };
+      const data: { dienstleisterId: string | null; status?: TicketStatus } = { dienstleisterId: input.dienstleisterId };
       if (input.dienstleisterId) {
-        data.status = "BEAUFTRAGT";
+        data.status = TicketStatus.BEAUFTRAGT;
       }
 
       const ticket = await ctx.db.ticket.update({

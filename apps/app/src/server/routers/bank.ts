@@ -3,7 +3,7 @@
  * Handles payment imports and allocations
  */
 
-import { router, protectedProcedure, writeProcedure, createPlanGatedProcedure } from "../trpc";
+import { router, createPlanGatedProcedure } from "../trpc";
 import { z } from "zod";
 import { logAudit } from "../middleware/audit";
 

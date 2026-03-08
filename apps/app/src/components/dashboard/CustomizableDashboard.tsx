@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useSyncExternalStore } from "react";
 import { Responsive, WidthProvider, Layout } from "react-grid-layout";
 import { WidgetConfig, WidgetType, WidgetSize } from "./widgets/types";
 import { WIDGET_DEFINITIONS } from "./widgets/definitions";
-import { Widget } from "./widgets/Widget";
+import { Widget, type DashboardData } from "./widgets/Widget";
 import { WidgetLibrary } from "./WidgetLibrary";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
@@ -12,8 +12,12 @@ import "./dashboard-custom.css";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
+const noopSubscribe = () => () => {};
+const getTrue = () => true;
+const getFalse = () => false;
+
 interface CustomizableDashboardProps {
-  data?: any;
+  data?: DashboardData;
   isLoading?: boolean;
 }
 
@@ -33,21 +37,16 @@ const DEFAULT_WIDGETS: WidgetConfig[] = [
 ];
 
 export function CustomizableDashboard({ data, isLoading }: CustomizableDashboardProps) {
-  const [widgets, setWidgets] = useState<WidgetConfig[]>([]);
+  const [widgets, setWidgets] = useState<WidgetConfig[]>(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("dashboard-widgets", JSON.stringify(DEFAULT_WIDGETS));
+    }
+    return DEFAULT_WIDGETS;
+  });
   const [isEditing, setIsEditing] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const [selectedWidgetId, setSelectedWidgetId] = useState<string | null>(null);
+  const mounted = useSyncExternalStore(noopSubscribe, getTrue, getFalse);
   const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null);
-
-  useEffect(() => {
-    setMounted(true);
-    // FORCE DEFAULT_WIDGETS für Debugging - später wieder aktivieren
-    setWidgets(DEFAULT_WIDGETS);
-    localStorage.setItem("dashboard-widgets", JSON.stringify(DEFAULT_WIDGETS));
-  }, []);
 
   useEffect(() => {
     if (mounted && widgets.length > 0) {
@@ -142,12 +141,11 @@ export function CustomizableDashboard({ data, isLoading }: CustomizableDashboard
   };
 
   const handleDragStart = () => {
-    setIsDragging(true);
-    setSelectedWidgetId(null);
+    // drag started
   };
 
   const handleDragStop = () => {
-    setTimeout(() => setIsDragging(false), 100);
+    // drag completed
   };
 
   const handleAddWidget = (type: WidgetType, size: WidgetSize) => {
@@ -177,27 +175,6 @@ export function CustomizableDashboard({ data, isLoading }: CustomizableDashboard
     setWidgets((prev) => prev.filter((w) => w.i !== id));
   };
 
-  const handleResizeWidget = (id: string, newSize: WidgetSize) => {
-    setWidgets((prev) =>
-      prev.map((widget) => {
-        if (widget.i === id) {
-          const definition = WIDGET_DEFINITIONS.find((w) => w.type === widget.type);
-          if (!definition) return widget;
-          const sizeConfig = definition.sizes[newSize];
-          return {
-            ...widget,
-            size: newSize,
-            w: sizeConfig.w,
-            h: sizeConfig.h,
-          };
-        }
-        return widget;
-      })
-    );
-    setSelectedWidgetId(null);
-    setMenuPosition(null);
-  };
-
   const handleResetLayout = () => {
     if (confirm("Dashboard auf Standardlayout zurücksetzen?")) {
       // Lösche localStorage komplett
@@ -211,7 +188,7 @@ export function CustomizableDashboard({ data, isLoading }: CustomizableDashboard
     }
   };
 
-  const handleWidgetMouseDown = (widgetId: string) => {
+  const handleWidgetMouseDown = () => {
     if (!isEditing) {
       const timer = setTimeout(() => {
         setIsEditing(true);
@@ -225,27 +202,6 @@ export function CustomizableDashboard({ data, isLoading }: CustomizableDashboard
     if (longPressTimer) {
       clearTimeout(longPressTimer);
       setLongPressTimer(null);
-    }
-  };
-
-  const handleResizeButtonClick = (widgetId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-
-    if (selectedWidgetId === widgetId) {
-      setSelectedWidgetId(null);
-      setMenuPosition(null);
-    } else {
-      // Get widget position
-      const button = e.currentTarget;
-      const widgetElement = button.closest('.widget-wrapper');
-      if (widgetElement) {
-        const rect = widgetElement.getBoundingClientRect();
-        setMenuPosition({
-          top: rect.top + rect.height / 2,
-          left: rect.left + rect.width / 2,
-        });
-      }
-      setSelectedWidgetId(widgetId);
     }
   };
 
@@ -343,10 +299,10 @@ export function CustomizableDashboard({ data, isLoading }: CustomizableDashboard
             >
               <div
                 className="widget-content"
-                onMouseDown={() => !isEditing && handleWidgetMouseDown(widget.i)}
+                onMouseDown={() => !isEditing && handleWidgetMouseDown()}
                 onMouseUp={handleWidgetMouseUp}
                 onMouseLeave={handleWidgetMouseUp}
-                onTouchStart={() => !isEditing && handleWidgetMouseDown(widget.i)}
+                onTouchStart={() => !isEditing && handleWidgetMouseDown()}
                 onTouchEnd={handleWidgetMouseUp}
               >
                 <Widget type={widget.type} size={widget.size} data={data} isLoading={isLoading} />

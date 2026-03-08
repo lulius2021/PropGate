@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import {
-  AuthCard, AuthInput, AuthButton, AuthError, ShieldIcon,
+  AuthCard, AuthButton, AuthError, ShieldIcon,
 } from "@/components/auth/AuthCard";
 
 export default function Verify2FAPage() {

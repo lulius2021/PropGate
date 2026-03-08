@@ -90,7 +90,7 @@ export default function DienstleisterPage() {
     }
   };
 
-  const handleEdit = (d: any) => {
+  const handleEdit = (d: { id: string; name: string; telefon: string | null; email: string | null; kategorie: string | null; notiz: string | null }) => {
     setEditId(d.id);
     setForm({ name: d.name, telefon: d.telefon || "", email: d.email || "", kategorie: d.kategorie || "", notiz: d.notiz || "" });
     setShowForm(true);
@@ -186,7 +186,7 @@ export default function DienstleisterPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--border)] bg-[var(--bg-card)]">
-              {dienstleister.map((d: any) => (
+              {dienstleister.map((d) => (
                 <tr key={d.id} className="hover:bg-[var(--bg-card-hover)]">
                   <td className="px-6 py-4 font-medium text-[var(--text-primary)]">{d.name}</td>
                   <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">{d.kategorie ? getKategorieLabel(d.kategorie) : "—"}</td>

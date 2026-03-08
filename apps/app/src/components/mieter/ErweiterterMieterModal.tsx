@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { trpc } from "@/lib/trpc/client";
 
 interface ErweiterterMieterModalProps {
@@ -12,6 +12,42 @@ interface ErweiterterMieterModalProps {
 
 type Tab = "stammdaten" | "mietverhaeltnis" | "kaution" | "nebenkosten" | "uebergabe" | "sonstiges";
 
+interface MieterFormData {
+  mieterIdIntern: string;
+  typ: "PRIVAT" | "GESCHAEFTLICH";
+  anrede: string;
+  titel: string;
+  vorname: string;
+  nachname: string;
+  firma: string;
+  geburtsdatum: string;
+  staatsangehoerigkeit: string;
+  strasse: string;
+  hausnummer: string;
+  plz: string;
+  ort: string;
+  land: string;
+  telefonMobil: string;
+  telefonFestnetz: string;
+  email: string;
+  kommunikationskanal: string;
+  notfallkontaktName: string;
+  notfallkontaktBeziehung: string;
+  notfallkontaktTelefon: string;
+  ausweisart: string;
+  ausweisnummer: string;
+  bonitaetGeprueft: boolean;
+  bonitaetDatum: string;
+  datenschutzHinweisUebergeben: boolean;
+  datenschutzDatum: string;
+  notizen: string;
+}
+
+interface MieterTabProps {
+  formData: MieterFormData;
+  setFormData: React.Dispatch<React.SetStateAction<MieterFormData>>;
+}
+
 export function ErweiterterMieterModal({ isOpen, onClose, onSuccess, mieterId }: ErweiterterMieterModalProps) {
   const [activeTab, setActiveTab] = useState<Tab>("stammdaten");
   const isEditMode = !!mieterId;
@@ -21,10 +57,10 @@ export function ErweiterterMieterModal({ isOpen, onClose, onSuccess, mieterId }:
     { enabled: isEditMode && isOpen }
   );
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<MieterFormData>({
     // Stammdaten
     mieterIdIntern: "",
-    typ: "PRIVAT" as any,
+    typ: "PRIVAT",
     anrede: "",
     titel: "",
     vorname: "",
@@ -79,46 +115,46 @@ export function ErweiterterMieterModal({ isOpen, onClose, onSuccess, mieterId }:
     },
   });
 
-  useEffect(() => {
-    if (mieterData && isEditMode) {
-      setFormData({
-        mieterIdIntern: mieterData.mieterIdIntern || "",
-        typ: mieterData.typ || "PRIVAT",
-        anrede: mieterData.anrede || "",
-        titel: mieterData.titel || "",
-        vorname: mieterData.vorname || "",
-        nachname: mieterData.nachname || "",
-        firma: mieterData.firma || "",
-        geburtsdatum: mieterData.geburtsdatum ? new Date(mieterData.geburtsdatum).toISOString().split('T')[0] : "",
-        staatsangehoerigkeit: mieterData.staatsangehoerigkeit || "",
+  const [prevMieterId, setPrevMieterId] = useState<string | undefined>(undefined);
+  if (mieterData && isEditMode && mieterId !== prevMieterId) {
+    setPrevMieterId(mieterId);
+    setFormData({
+      mieterIdIntern: mieterData.mieterIdIntern || "",
+      typ: (mieterData.typ || "PRIVAT") as "PRIVAT" | "GESCHAEFTLICH",
+      anrede: mieterData.anrede || "",
+      titel: mieterData.titel || "",
+      vorname: mieterData.vorname || "",
+      nachname: mieterData.nachname || "",
+      firma: mieterData.firma || "",
+      geburtsdatum: mieterData.geburtsdatum ? new Date(mieterData.geburtsdatum).toISOString().split('T')[0] : "",
+      staatsangehoerigkeit: mieterData.staatsangehoerigkeit || "",
 
-        strasse: mieterData.strasse || "",
-        hausnummer: mieterData.hausnummer || "",
-        plz: mieterData.plz || "",
-        ort: mieterData.ort || "",
-        land: mieterData.land || "Deutschland",
+      strasse: mieterData.strasse || "",
+      hausnummer: mieterData.hausnummer || "",
+      plz: mieterData.plz || "",
+      ort: mieterData.ort || "",
+      land: mieterData.land || "Deutschland",
 
-        telefonMobil: mieterData.telefonMobil || "",
-        telefonFestnetz: mieterData.telefonFestnetz || "",
-        email: mieterData.email || "",
-        kommunikationskanal: mieterData.kommunikationskanal || "",
+      telefonMobil: mieterData.telefonMobil || "",
+      telefonFestnetz: mieterData.telefonFestnetz || "",
+      email: mieterData.email || "",
+      kommunikationskanal: mieterData.kommunikationskanal || "",
 
-        notfallkontaktName: mieterData.notfallkontaktName || "",
-        notfallkontaktBeziehung: mieterData.notfallkontaktBeziehung || "",
-        notfallkontaktTelefon: mieterData.notfallkontaktTelefon || "",
+      notfallkontaktName: mieterData.notfallkontaktName || "",
+      notfallkontaktBeziehung: mieterData.notfallkontaktBeziehung || "",
+      notfallkontaktTelefon: mieterData.notfallkontaktTelefon || "",
 
-        ausweisart: mieterData.ausweisart || "",
-        ausweisnummer: mieterData.ausweisnummer || "",
-        bonitaetGeprueft: mieterData.bonitaetGeprueft || false,
-        bonitaetDatum: mieterData.bonitaetDatum ? new Date(mieterData.bonitaetDatum).toISOString().split('T')[0] : "",
+      ausweisart: mieterData.ausweisart || "",
+      ausweisnummer: mieterData.ausweisnummer || "",
+      bonitaetGeprueft: mieterData.bonitaetGeprueft || false,
+      bonitaetDatum: mieterData.bonitaetDatum ? new Date(mieterData.bonitaetDatum).toISOString().split('T')[0] : "",
 
-        datenschutzHinweisUebergeben: mieterData.datenschutzHinweisUebergeben || false,
-        datenschutzDatum: mieterData.datenschutzDatum ? new Date(mieterData.datenschutzDatum).toISOString().split('T')[0] : "",
+      datenschutzHinweisUebergeben: mieterData.datenschutzHinweisUebergeben || false,
+      datenschutzDatum: mieterData.datenschutzDatum ? new Date(mieterData.datenschutzDatum).toISOString().split('T')[0] : "",
 
-        notizen: mieterData.notizen || "",
-      });
-    }
-  }, [mieterData, isEditMode]);
+      notizen: mieterData.notizen || "",
+    });
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -161,9 +197,9 @@ export function ErweiterterMieterModal({ isOpen, onClose, onSuccess, mieterId }:
     };
 
     if (isEditMode && mieterId) {
-      updateMutation.mutate({ id: mieterId, ...data } as any);
+      updateMutation.mutate({ id: mieterId, ...data } as Parameters<typeof updateMutation.mutate>[0]);
     } else {
-      createMutation.mutate(data as any);
+      createMutation.mutate(data as Parameters<typeof createMutation.mutate>[0]);
     }
   };
 
@@ -260,7 +296,7 @@ export function ErweiterterMieterModal({ isOpen, onClose, onSuccess, mieterId }:
 }
 
 // Tab Components
-function StammdatenTab({ formData, setFormData }: any) {
+function StammdatenTab({ formData, setFormData }: MieterTabProps) {
   return (
     <div className="space-y-6">
       <div>
@@ -270,7 +306,7 @@ function StammdatenTab({ formData, setFormData }: any) {
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Mieter-Typ</label>
             <select
               value={formData.typ}
-              onChange={(e) => setFormData({ ...formData, typ: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, typ: e.target.value as "PRIVAT" | "GESCHAEFTLICH" })}
               className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-page)] text-[var(--text-primary)] px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
               <option value="PRIVAT">Privat</option>
@@ -588,7 +624,7 @@ function StammdatenTab({ formData, setFormData }: any) {
   );
 }
 
-function SonstigesTab({ formData, setFormData }: any) {
+function SonstigesTab({ formData, setFormData }: MieterTabProps) {
   return (
     <div className="space-y-6">
       <div>

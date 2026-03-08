@@ -123,7 +123,7 @@ export const vertraegeRouter = router({
         where: { id: input.id },
         data: {
           auszugsdatum: input.auszugsdatum,
-          vertragStatus: "GEKUENDIGT" as any, // Added to VertragStatus enum in schema.prisma - run prisma generate
+          vertragStatus: "GEKUENDIGT",
           notizen: input.kuendigungsgrund
             ? `${mietverhaeltnis.notizen ? mietverhaeltnis.notizen + "\n" : ""}Kündigungsgrund: ${input.kuendigungsgrund}`
             : mietverhaeltnis.notizen,

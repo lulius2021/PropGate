@@ -161,7 +161,7 @@ export default function ZaehlerDetailPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--border)] bg-[var(--bg-card)]">
-              {zaehler.ablesungen.map((a: any) => (
+              {zaehler.ablesungen.map((a) => (
                 <tr key={a.id} className="hover:bg-[var(--bg-card-hover)]">
                   <td className="px-6 py-4 text-sm text-[var(--text-primary)]">
                     {new Date(a.datum).toLocaleDateString("de-DE")}

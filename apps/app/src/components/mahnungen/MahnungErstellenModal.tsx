@@ -51,7 +51,7 @@ export function MahnungErstellenModal({ open, onClose, onSuccess, prefillMietver
     setError(null);
     erstellenMutation.mutate({
       mietverhaeltnisId: selectedId,
-      mahnstufe: mahnstufe as any,
+      mahnstufe: mahnstufe as "ERINNERUNG" | "MAHNUNG_1" | "MAHNUNG_2" | "MAHNUNG_3",
       dokumentGenerieren: true,
     });
   };
@@ -94,7 +94,7 @@ export function MahnungErstellenModal({ open, onClose, onSuccess, prefillMietver
                   className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-page)] text-[var(--text-primary)] px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
                 >
                   <option value="">-- Mietverhältnis wählen --</option>
-                  {vorschlaege?.map((v: any) => (
+                  {vorschlaege?.map((v) => (
                     <option key={v.mietverhaeltnisId} value={v.mietverhaeltnisId}>
                       {v.mieter.nachname} – {v.objekt.bezeichnung} / {v.einheit.einheitNr} ({v.offenerBetrag.toFixed(2)} € offen)
                     </option>

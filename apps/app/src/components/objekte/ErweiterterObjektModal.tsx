@@ -1,7 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import Image from "next/image";
 import { trpc } from "@/lib/trpc/client";
+
+function getInitialObjektFormData() {
+  return {
+    bezeichnung: "", objektIdIntern: "", strasse: "", hausnummer: "", plz: "", ort: "", land: "Deutschland", bildUrl: "",
+    eigentuemer: "", eigentuemeranteile: "", vertretungsberechtigt: false,
+    objektart: "" as string, verwaltungsart: "" as string, baujahr: "", kernsanierungJahr: "",
+    flurstueck: "", gemarkung: "", grundstueckFlaeche: "",
+    anzahlGebaeude: "", anzahlGeschosse: "", unterkellerung: false, aufzug: false, tiefgarage: false,
+    wohnflaeche: "", gewerbeflaeche: "", nutzflaeche: "", gesamtflaeche: "",
+    anzahlWohnungen: "", anzahlGewerbe: "", anzahlStellplaetze: "",
+    heizungsart: "", warmwasser: "", stromAllgemein: false, wasserUnterzaehler: false, internetVersorgung: "", pvAnlage: false,
+    verwalterVertragBeginn: "", verwalterVertragLaufzeit: "", verwalterVerguetung: "",
+    objektkontoIban: "", ruecklagenkontoIban: "", hausgelkontoIban: "", nebenkostenUmlagefaehig: false, umlageschluessel: "",
+    schliessanlage: "", schluesselbestand: "", zugaenge: "",
+    energieausweis: "", notizen: "",
+  };
+}
 
 interface ErweiterterObjektModalProps {
   isOpen: boolean;
@@ -15,7 +33,6 @@ type Tab = "basis" | "eigentum" | "flaechen" | "technik" | "verwaltung" | "partn
 export function ErweiterterObjektModal({ isOpen, onClose, onSuccess, objektId }: ErweiterterObjektModalProps) {
   const [activeTab, setActiveTab] = useState<Tab>("basis");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
   const isEditMode = !!objektId;
 
   // Lade Objekt-Daten im Bearbeitungsmodus
@@ -24,77 +41,7 @@ export function ErweiterterObjektModal({ isOpen, onClose, onSuccess, objektId }:
     { enabled: isEditMode && isOpen }
   );
 
-  const [formData, setFormData] = useState({
-    // Basis
-    bezeichnung: "",
-    objektIdIntern: "",
-    strasse: "",
-    hausnummer: "",
-    plz: "",
-    ort: "",
-    land: "Deutschland",
-    bildUrl: "",
-
-    // Eigentum
-    eigentuemer: "",
-    eigentuemeranteile: "",
-    vertretungsberechtigt: false,
-
-    // Objekt-Typ
-    objektart: "" as any,
-    verwaltungsart: "" as any,
-    baujahr: "",
-    kernsanierungJahr: "",
-
-    // Grundstück
-    flurstueck: "",
-    gemarkung: "",
-    grundstueckFlaeche: "",
-
-    // Gebäude
-    anzahlGebaeude: "",
-    anzahlGeschosse: "",
-    unterkellerung: false,
-    aufzug: false,
-    tiefgarage: false,
-
-    // Flächen
-    wohnflaeche: "",
-    gewerbeflaeche: "",
-    nutzflaeche: "",
-    gesamtflaeche: "",
-
-    anzahlWohnungen: "",
-    anzahlGewerbe: "",
-    anzahlStellplaetze: "",
-
-    // Technik
-    heizungsart: "",
-    warmwasser: "",
-    stromAllgemein: false,
-    wasserUnterzaehler: false,
-    internetVersorgung: "",
-    pvAnlage: false,
-
-    // Verwaltung
-    verwalterVertragBeginn: "",
-    verwalterVertragLaufzeit: "",
-    verwalterVerguetung: "",
-    objektkontoIban: "",
-    ruecklagenkontoIban: "",
-    hausgelkontoIban: "",
-    nebenkostenUmlagefaehig: false,
-    umlageschluessel: "",
-
-    // Schlüssel
-    schliessanlage: "",
-    schluesselbestand: "",
-    zugaenge: "",
-
-    // Sonstiges
-    energieausweis: "",
-    notizen: "",
-  });
+  const [formData, setFormData] = useState(getInitialObjektFormData);
 
   const createMutation = trpc.objekte.create.useMutation({
     onSuccess: () => {
@@ -110,78 +57,78 @@ export function ErweiterterObjektModal({ isOpen, onClose, onSuccess, objektId }:
     },
   });
 
-  // Vorausfüllen der Daten im Bearbeitungsmodus
-  useEffect(() => {
-    if (objektData && isEditMode) {
-      setFormData({
-        bezeichnung: objektData.bezeichnung || "",
-        objektIdIntern: objektData.objektIdIntern || "",
-        strasse: objektData.strasse || "",
-        hausnummer: objektData.hausnummer || "",
-        plz: objektData.plz || "",
-        ort: objektData.ort || "",
-        land: objektData.land || "Deutschland",
-        bildUrl: objektData.bildUrl || "",
+  // Vorausfüllen der Daten im Bearbeitungsmodus (render-time sync)
+  const [prevObjektId, setPrevObjektId] = useState<string | undefined>(undefined);
+  if (objektData && isEditMode && objektId !== prevObjektId) {
+    setPrevObjektId(objektId);
+    setFormData({
+      bezeichnung: objektData.bezeichnung || "",
+      objektIdIntern: objektData.objektIdIntern || "",
+      strasse: objektData.strasse || "",
+      hausnummer: objektData.hausnummer || "",
+      plz: objektData.plz || "",
+      ort: objektData.ort || "",
+      land: objektData.land || "Deutschland",
+      bildUrl: objektData.bildUrl || "",
 
-        eigentuemer: objektData.eigentuemer || "",
-        eigentuemeranteile: objektData.eigentuemeranteile || "",
-        vertretungsberechtigt: objektData.vertretungsberechtigt || false,
+      eigentuemer: objektData.eigentuemer || "",
+      eigentuemeranteile: objektData.eigentuemeranteile || "",
+      vertretungsberechtigt: objektData.vertretungsberechtigt || false,
 
-        objektart: objektData.objektart || "MFH",
-        verwaltungsart: objektData.verwaltungsart || "",
-        baujahr: objektData.baujahr?.toString() || "",
-        kernsanierungJahr: objektData.kernsanierungJahr?.toString() || "",
+      objektart: objektData.objektart || "MFH",
+      verwaltungsart: objektData.verwaltungsart || "",
+      baujahr: objektData.baujahr?.toString() || "",
+      kernsanierungJahr: objektData.kernsanierungJahr?.toString() || "",
 
-        flurstueck: objektData.flurstueck || "",
-        gemarkung: objektData.gemarkung || "",
-        grundstueckFlaeche: objektData.grundstueckFlaeche?.toString() || "",
+      flurstueck: objektData.flurstueck || "",
+      gemarkung: objektData.gemarkung || "",
+      grundstueckFlaeche: objektData.grundstueckFlaeche?.toString() || "",
 
-        anzahlGebaeude: objektData.anzahlGebaeude?.toString() || "",
-        anzahlGeschosse: objektData.anzahlGeschosse?.toString() || "",
-        unterkellerung: objektData.unterkellerung || false,
-        aufzug: objektData.aufzug || false,
-        tiefgarage: objektData.tiefgarage || false,
+      anzahlGebaeude: objektData.anzahlGebaeude?.toString() || "",
+      anzahlGeschosse: objektData.anzahlGeschosse?.toString() || "",
+      unterkellerung: objektData.unterkellerung || false,
+      aufzug: objektData.aufzug || false,
+      tiefgarage: objektData.tiefgarage || false,
 
-        wohnflaeche: objektData.wohnflaeche?.toString() || "",
-        gewerbeflaeche: objektData.gewerbeflaeche?.toString() || "",
-        nutzflaeche: objektData.nutzflaeche?.toString() || "",
-        gesamtflaeche: objektData.gesamtflaeche?.toString() || "",
+      wohnflaeche: objektData.wohnflaeche?.toString() || "",
+      gewerbeflaeche: objektData.gewerbeflaeche?.toString() || "",
+      nutzflaeche: objektData.nutzflaeche?.toString() || "",
+      gesamtflaeche: objektData.gesamtflaeche?.toString() || "",
 
-        anzahlWohnungen: objektData.anzahlWohnungen?.toString() || "",
-        anzahlGewerbe: objektData.anzahlGewerbe?.toString() || "",
-        anzahlStellplaetze: objektData.anzahlStellplaetze?.toString() || "",
+      anzahlWohnungen: objektData.anzahlWohnungen?.toString() || "",
+      anzahlGewerbe: objektData.anzahlGewerbe?.toString() || "",
+      anzahlStellplaetze: objektData.anzahlStellplaetze?.toString() || "",
 
-        heizungsart: objektData.heizungsart || "",
-        warmwasser: objektData.warmwasser || "",
-        stromAllgemein: objektData.stromAllgemein || false,
-        wasserUnterzaehler: objektData.wasserUnterzaehler || false,
-        internetVersorgung: objektData.internetVersorgung || "",
-        pvAnlage: objektData.pvAnlage || false,
+      heizungsart: objektData.heizungsart || "",
+      warmwasser: objektData.warmwasser || "",
+      stromAllgemein: objektData.stromAllgemein || false,
+      wasserUnterzaehler: objektData.wasserUnterzaehler || false,
+      internetVersorgung: objektData.internetVersorgung || "",
+      pvAnlage: objektData.pvAnlage || false,
 
-        verwalterVertragBeginn: objektData.verwalterVertragBeginn
-          ? new Date(objektData.verwalterVertragBeginn).toISOString().split('T')[0]
-          : "",
-        verwalterVertragLaufzeit: objektData.verwalterVertragLaufzeit || "",
-        verwalterVerguetung: objektData.verwalterVerguetung || "",
-        objektkontoIban: objektData.objektkontoIban || "",
-        ruecklagenkontoIban: objektData.ruecklagenkontoIban || "",
-        hausgelkontoIban: objektData.hausgelkontoIban || "",
-        nebenkostenUmlagefaehig: objektData.nebenkostenUmlagefaehig || false,
-        umlageschluessel: objektData.umlageschluessel || "",
+      verwalterVertragBeginn: objektData.verwalterVertragBeginn
+        ? new Date(objektData.verwalterVertragBeginn).toISOString().split('T')[0]
+        : "",
+      verwalterVertragLaufzeit: objektData.verwalterVertragLaufzeit || "",
+      verwalterVerguetung: objektData.verwalterVerguetung || "",
+      objektkontoIban: objektData.objektkontoIban || "",
+      ruecklagenkontoIban: objektData.ruecklagenkontoIban || "",
+      hausgelkontoIban: objektData.hausgelkontoIban || "",
+      nebenkostenUmlagefaehig: objektData.nebenkostenUmlagefaehig || false,
+      umlageschluessel: objektData.umlageschluessel || "",
 
-        schliessanlage: objektData.schliessanlage || "",
-        schluesselbestand: objektData.schluesselbestand || "",
-        zugaenge: objektData.zugaenge || "",
+      schliessanlage: objektData.schliessanlage || "",
+      schluesselbestand: objektData.schluesselbestand || "",
+      zugaenge: objektData.zugaenge || "",
 
-        energieausweis: objektData.energieausweis || "",
-        notizen: objektData.notizen || "",
-      });
+      energieausweis: objektData.energieausweis || "",
+      notizen: objektData.notizen || "",
+    });
 
-      if (objektData.bildUrl) {
-        setImagePreview(objektData.bildUrl);
-      }
+    if (objektData.bildUrl) {
+      setImagePreview(objektData.bildUrl);
     }
-  }, [objektData, isEditMode]);
+  }
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -197,17 +144,14 @@ export function ErweiterterObjektModal({ isOpen, onClose, onSuccess, objektId }:
       return;
     }
 
-    setIsUploading(true);
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64String = reader.result as string;
       setImagePreview(base64String);
       setFormData({ ...formData, bildUrl: base64String });
-      setIsUploading(false);
     };
     reader.onerror = () => {
       alert("Fehler beim Laden des Bildes");
-      setIsUploading(false);
     };
     reader.readAsDataURL(file);
   };
@@ -283,9 +227,9 @@ export function ErweiterterObjektModal({ isOpen, onClose, onSuccess, objektId }:
     };
 
     if (isEditMode && objektId) {
-      updateMutation.mutate({ id: objektId, ...data } as any);
+      updateMutation.mutate({ id: objektId, ...data } as Parameters<typeof updateMutation.mutate>[0]);
     } else {
-      createMutation.mutate(data as any);
+      createMutation.mutate(data as Parameters<typeof createMutation.mutate>[0]);
     }
   };
 
@@ -341,7 +285,7 @@ export function ErweiterterObjektModal({ isOpen, onClose, onSuccess, objektId }:
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6">
-          {activeTab === "basis" && <BasisTab formData={formData} setFormData={setFormData} imagePreview={imagePreview} handleImageUpload={handleImageUpload} handleRemoveImage={handleRemoveImage} isUploading={isUploading} />}
+          {activeTab === "basis" && <BasisTab formData={formData} setFormData={setFormData} imagePreview={imagePreview} handleImageUpload={handleImageUpload} handleRemoveImage={handleRemoveImage} />}
           {activeTab === "eigentum" && <EigentumTab formData={formData} setFormData={setFormData} />}
           {activeTab === "flaechen" && <FlaechenTab formData={formData} setFormData={setFormData} />}
           {activeTab === "technik" && <TechnikTab formData={formData} setFormData={setFormData} />}
@@ -393,7 +337,19 @@ export function ErweiterterObjektModal({ isOpen, onClose, onSuccess, objektId }:
 }
 
 // Tab Components
-function BasisTab({ formData, setFormData, imagePreview, handleImageUpload, handleRemoveImage, isUploading }: any) {
+type ObjektFormData = ReturnType<typeof getInitialObjektFormData>;
+interface ObjektTabProps {
+  formData: ObjektFormData;
+  setFormData: React.Dispatch<React.SetStateAction<ObjektFormData>>;
+}
+
+interface BasisTabProps extends ObjektTabProps {
+  imagePreview: string | null;
+  handleImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleRemoveImage: () => void;
+}
+
+function BasisTab({ formData, setFormData, imagePreview, handleImageUpload, handleRemoveImage }: BasisTabProps) {
   return (
     <div className="space-y-6">
       <div>
@@ -494,7 +450,7 @@ function BasisTab({ formData, setFormData, imagePreview, handleImageUpload, hand
           </label>
         ) : (
           <div className="relative">
-            <img src={imagePreview} alt="Vorschau" className="w-full h-32 rounded-xl object-cover border" />
+            <Image src={imagePreview} alt="Vorschau" width={800} height={128} className="w-full h-32 rounded-xl object-cover border" unoptimized />
             <button type="button" onClick={handleRemoveImage} className="absolute top-2 right-2 rounded-full bg-red-500 p-2 text-white shadow-lg hover:bg-red-600">
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
@@ -505,7 +461,7 @@ function BasisTab({ formData, setFormData, imagePreview, handleImageUpload, hand
   );
 }
 
-function EigentumTab({ formData, setFormData }: any) {
+function EigentumTab({ formData, setFormData }: ObjektTabProps) {
   return (
     <div className="space-y-6">
       <div>
@@ -581,7 +537,7 @@ function EigentumTab({ formData, setFormData }: any) {
   );
 }
 
-function FlaechenTab({ formData, setFormData }: any) {
+function FlaechenTab({ formData, setFormData }: ObjektTabProps) {
   return (
     <div className="space-y-6">
       <div>
@@ -632,7 +588,7 @@ function FlaechenTab({ formData, setFormData }: any) {
   );
 }
 
-function TechnikTab({ formData, setFormData }: any) {
+function TechnikTab({ formData, setFormData }: ObjektTabProps) {
   return (
     <div className="space-y-6">
       <div>
@@ -698,7 +654,7 @@ function TechnikTab({ formData, setFormData }: any) {
   );
 }
 
-function VerwaltungTab({ formData, setFormData }: any) {
+function VerwaltungTab({ formData, setFormData }: ObjektTabProps) {
   return (
     <div className="space-y-6">
       <div>
@@ -765,7 +721,7 @@ function VerwaltungTab({ formData, setFormData }: any) {
   );
 }
 
-function ZugangTab({ formData, setFormData }: any) {
+function ZugangTab({ formData, setFormData }: ObjektTabProps) {
   return (
     <div className="space-y-6">
       <div>

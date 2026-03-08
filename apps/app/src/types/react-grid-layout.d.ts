@@ -21,7 +21,7 @@ declare module "react-grid-layout" {
   }
 
   export interface ResponsiveProps {
-    [key: string]: any;
+    [key: string]: unknown;
   }
 
   export const Responsive: ComponentType<ResponsiveProps>;

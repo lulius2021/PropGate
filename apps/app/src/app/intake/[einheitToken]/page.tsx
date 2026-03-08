@@ -30,7 +30,7 @@ export default function IntakePage({ params }: { params: { einheitToken: string 
     }
     await submitMutation.mutateAsync({
       einheitToken: params.einheitToken,
-      kategorie: form.kategorie as any,
+      kategorie: form.kategorie as "SCHADENSMELDUNG" | "WARTUNG" | "ANFRAGE" | "BESCHWERDE",
       beschreibung: form.beschreibung,
       kontaktName: form.kontaktName,
       kontaktTelefon: form.kontaktTelefon,

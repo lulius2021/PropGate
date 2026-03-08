@@ -260,7 +260,7 @@ export default function ObjektDetailPage() {
                         {einheit.zimmer ?? "–"}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-[var(--text-secondary)]">
-                        {(einheit as any).lage ?? "–"}
+                        {(einheit as { lage?: string | null }).lage ?? "–"}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
                         <span

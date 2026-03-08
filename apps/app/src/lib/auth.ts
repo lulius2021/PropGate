@@ -53,7 +53,7 @@ export const authConfig: NextAuthConfig = {
           if (!isPasswordValid) {
             // Increment failed attempts
             const newAttempts = user.failedLoginAttempts + 1;
-            const updateData: any = {
+            const updateData: { failedLoginAttempts: number; lockedUntil?: Date } = {
               failedLoginAttempts: newAttempts,
             };
 
@@ -98,8 +98,8 @@ export const authConfig: NextAuthConfig = {
             needsTwoFactor: user.totpEnabled,
             twoFactorVerified: false,
           };
-        } catch (error: any) {
-          if (error?.message?.startsWith("ACCOUNT_LOCKED:")) {
+        } catch (error: unknown) {
+          if (error instanceof Error && error.message?.startsWith("ACCOUNT_LOCKED:")) {
             throw error;
           }
           console.error("Auth error:", error);
@@ -109,14 +109,15 @@ export const authConfig: NextAuthConfig = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user, trigger, session }: { token: any; user: any; trigger?: string; session?: any }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
-        token.id = user.id;
-        token.tenantId = user.tenantId;
-        token.tenantName = user.tenantName;
-        token.role = user.role;
-        token.needsTwoFactor = user.needsTwoFactor ?? false;
-        token.twoFactorVerified = user.twoFactorVerified ?? false;
+        const u = user as Record<string, unknown>;
+        token.id = u.id;
+        token.tenantId = u.tenantId;
+        token.tenantName = u.tenantName;
+        token.role = u.role;
+        token.needsTwoFactor = u.needsTwoFactor ?? false;
+        token.twoFactorVerified = u.twoFactorVerified ?? false;
       }
       // Allow updating 2FA verification status via session update
       if (trigger === "update" && session?.twoFactorVerified !== undefined) {
@@ -124,14 +125,15 @@ export const authConfig: NextAuthConfig = {
       }
       return token;
     },
-    async session({ session, token }: { session: any; token: any }) {
+    async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id;
-        session.user.tenantId = token.tenantId;
-        session.user.tenantName = token.tenantName;
-        session.user.role = token.role;
-        session.user.needsTwoFactor = token.needsTwoFactor;
-        session.user.twoFactorVerified = token.twoFactorVerified;
+        const usr = session.user as unknown as Record<string, unknown>;
+        usr.id = token.id as string;
+        usr.tenantId = token.tenantId as string;
+        usr.tenantName = token.tenantName as string;
+        usr.role = token.role as string;
+        usr.needsTwoFactor = token.needsTwoFactor as boolean;
+        usr.twoFactorVerified = token.twoFactorVerified as boolean;
       }
       return session;
     },

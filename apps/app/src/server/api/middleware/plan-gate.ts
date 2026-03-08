@@ -42,7 +42,7 @@ export function checkPlanFeature(
  * Get tenant plan from database
  */
 export async function getTenantPlan(
-  db: any,
+  db: { tenant: { findUnique: (args: { where: { id: string }; select: { plan: true } }) => Promise<{ plan: string } | null> } },
   tenantId: string
 ): Promise<PlanName> {
   const tenant = await db.tenant.findUnique({

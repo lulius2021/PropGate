@@ -95,7 +95,7 @@ export default function MahnungenPage() {
           mahnstufe,
           dokumentGenerieren: true,
         });
-        if ((result as any)?.dokumentFehler) {
+        if ((result as { dokumentFehler?: boolean })?.dokumentFehler) {
           setSuccessMsg(`${label} erstellt — Dokument konnte nicht generiert werden.`);
         } else {
           setSuccessMsg(`${label} erfolgreich erstellt!`);
@@ -275,7 +275,7 @@ export default function MahnungenPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)] bg-[var(--bg-card)]">
-                {vorschlaege?.map((vorschlag: any) => (
+                {vorschlaege?.map((vorschlag) => (
                   <tr key={vorschlag.mietverhaeltnisId} className="hover:bg-[var(--bg-card-hover)]">
                     <td className="px-6 py-4">
                       <div className="font-medium text-[var(--text-primary)]">
@@ -294,7 +294,7 @@ export default function MahnungenPage() {
                       {vorschlag.offenerBetrag.toFixed(2)} €
                     </td>
                     <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
-                      {vorschlag.offeneSollstellungen?.map((s: any) => s.titel).join(", ") || "—"}
+                      {vorschlag.offeneSollstellungen?.map((s: { titel: string }) => s.titel).join(", ") || "—"}
                     </td>
                     <td className="px-6 py-4">
                       <span className="inline-flex rounded-full bg-red-500/15 px-2 text-xs font-semibold leading-5 text-red-400">
@@ -381,7 +381,7 @@ export default function MahnungenPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)] bg-[var(--bg-card)]">
-                {mahnungen?.map((mahnung: any) => (
+                {mahnungen?.map((mahnung) => (
                   <tr key={mahnung.id} className="hover:bg-[var(--bg-card-hover)]">
                     <td className="px-6 py-4">
                       <div className="font-medium text-[var(--text-primary)]">
@@ -398,7 +398,7 @@ export default function MahnungenPage() {
                     </td>
                     <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                       {mahnung.offeneSollstellungen && mahnung.offeneSollstellungen.length > 0
-                        ? mahnung.offeneSollstellungen.map((s: any) => s.titel).join(", ")
+                        ? mahnung.offeneSollstellungen.map((s: { titel: string }) => s.titel).join(", ")
                         : "—"}
                     </td>
                     <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">

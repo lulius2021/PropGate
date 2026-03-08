@@ -143,7 +143,7 @@ export default function ZaehlerPage() {
                   className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-page)] text-[var(--text-primary)] px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
                   <option value="">Objekt auswählen...</option>
-                  {objekte?.map((o: any) => (
+                  {objekte?.map((o) => (
                     <option key={o.id} value={o.id}>{o.bezeichnung}</option>
                   ))}
                 </select>
@@ -160,9 +160,9 @@ export default function ZaehlerPage() {
                     className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-page)] text-[var(--text-primary)] px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     <option value="">Dem Objekt zuordnen (nicht einer Einheit)</option>
-                    {einheiten?.filter((e: any) => e.objektId === formObjektId).map((e: any) => (
+                    {einheiten?.filter((e) => e.objektId === formObjektId).map((e) => (
                       <option key={e.id} value={e.id}>
-                        Einheit {e.einheitNr}{e.bezeichnung ? ` – ${e.bezeichnung}` : ""}
+                        Einheit {e.einheitNr}{e.lage ? ` – ${e.lage}` : ""}
                       </option>
                     ))}
                   </select>
@@ -313,7 +313,7 @@ export default function ZaehlerPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--border)] bg-[var(--bg-card)]">
-              {zaehler?.map((z: any) => (
+              {zaehler?.map((z) => (
                 <tr key={z.id} className="hover:bg-[var(--bg-card-hover)] cursor-pointer" onClick={() => router.push(`/zaehler/${z.id}`)}>
                   <td className="px-6 py-4">
                     <div className="font-medium text-[var(--text-primary)]">

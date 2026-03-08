@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { trpc } from "@/lib/trpc/client";
 import { TwoFactorSetup } from "@/components/auth/TwoFactorSetup";
 import { TwoFactorDisable } from "@/components/auth/TwoFactorDisable";
@@ -202,7 +202,7 @@ function SecurityTab() {
 
 function DemoDataTab() {
   const [showConfirm, setShowConfirm] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<{ objekte: number; einheiten: number; mieter: number; mietverhaeltnisse: number; sollstellungen: number; tickets: number; mahnungen: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const seedMutation = trpc.seeding.createDemoData.useMutation({
@@ -280,20 +280,25 @@ function DemoDataTab() {
 }
 
 function AutoMahnungTab() {
-  const utils = trpc.useUtils();
   const { data: settings, isLoading } = trpc.userSettings.getAutoMahnungSettings.useQuery();
-  const [form, setForm] = useState({ autoMahnungAktiv: false, autoMahnungTageNachFaelligkeit: 7, autoMahnungEmailAktiv: false });
-  const [saved, setSaved] = useState(false);
 
-  useEffect(() => {
-    if (settings) {
-      setForm({
-        autoMahnungAktiv: settings.autoMahnungAktiv,
-        autoMahnungTageNachFaelligkeit: settings.autoMahnungTageNachFaelligkeit,
-        autoMahnungEmailAktiv: settings.autoMahnungEmailAktiv,
-      });
-    }
-  }, [settings]);
+  if (isLoading) return <div className="p-6 text-sm text-[var(--text-secondary)]">Laden...</div>;
+
+  return (
+    <AutoMahnungForm
+      initialValues={{
+        autoMahnungAktiv: settings?.autoMahnungAktiv ?? false,
+        autoMahnungTageNachFaelligkeit: settings?.autoMahnungTageNachFaelligkeit ?? 7,
+        autoMahnungEmailAktiv: settings?.autoMahnungEmailAktiv ?? false,
+      }}
+    />
+  );
+}
+
+function AutoMahnungForm({ initialValues }: { initialValues: { autoMahnungAktiv: boolean; autoMahnungTageNachFaelligkeit: number; autoMahnungEmailAktiv: boolean } }) {
+  const utils = trpc.useUtils();
+  const [form, setForm] = useState(initialValues);
+  const [saved, setSaved] = useState(false);
 
   const updateMutation = trpc.userSettings.updateAutoMahnung.useMutation({
     onSuccess: () => {
@@ -302,8 +307,6 @@ function AutoMahnungTab() {
       setTimeout(() => setSaved(false), 3000);
     },
   });
-
-  if (isLoading) return <div className="p-6 text-sm text-[var(--text-secondary)]">Laden...</div>;
 
   return (
     <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-sm">

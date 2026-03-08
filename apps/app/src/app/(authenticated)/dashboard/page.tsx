@@ -15,7 +15,7 @@ export default function DashboardPage() {
   });
   const [zeitraum, setZeitraum] = useState<"MONAT" | "QUARTAL" | "JAHR" | "">(() => {
     if (typeof window !== "undefined") {
-      return (localStorage.getItem("propgate_dash_zeitraum") as any) ?? "";
+      return (localStorage.getItem("propgate_dash_zeitraum") as "MONAT" | "QUARTAL" | "JAHR" | "") ?? "";
     }
     return "";
   });
@@ -48,7 +48,7 @@ export default function DashboardPage() {
   };
 
   const handleZeitraumChange = (value: string) => {
-    setZeitraum(value as any);
+    setZeitraum(value as "MONAT" | "QUARTAL" | "JAHR" | "");
     localStorage.setItem("propgate_dash_zeitraum", value);
   };
 
