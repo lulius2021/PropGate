@@ -352,7 +352,8 @@ export default function UpgradePage() {
         </div>
 
         <p className="mt-4 text-center text-xs text-white/20">
-          Sichere Zahlung über Stripe · SSL-verschlüsselt
+          Sichere Zahlung ueber Stripe · SSL-verschluesselt · Es gelten unsere{" "}
+          <a href={`${process.env.NEXT_PUBLIC_MARKETING_URL ?? "https://propgate.de"}/agb`} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-white/40 transition">AGB</a>
         </p>
       </div>
     </div>

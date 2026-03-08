@@ -143,6 +143,7 @@ function RegisterForm() {
   );
   const [billing, setBilling] = useState<Billing>("monthly");
   const [form, setForm] = useState({ name: "", company: "", phone: "", email: "", password: "" });
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [referralCode, setReferralCode] = useState("");
   const [referralValid, setReferralValid] = useState<boolean | null>(null);
   const [referralChecking, setReferralChecking] = useState(false);
@@ -182,6 +183,7 @@ function RegisterForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    if (!acceptedTerms) { setError("Bitte akzeptieren Sie die AGB und Datenschutzerklaerung."); return; }
     const validation = validatePassword(form.password);
     if (!validation.valid) { setError(validation.errors[0]); return; }
     setLoading(true);
@@ -199,6 +201,7 @@ function RegisterForm() {
           plan: selectedPlan,
           billing: isTrial ? null : billing,
           referralCode: referralCode.trim().toUpperCase() || null,
+          acceptedTerms,
         }),
       });
       const data = await res.json();
@@ -514,8 +517,29 @@ function RegisterForm() {
           )}
         </div>
 
+        {/* AGB & Datenschutz Checkbox */}
+        <label className="flex items-start gap-2.5 cursor-pointer group">
+          <input
+            type="checkbox"
+            checked={acceptedTerms}
+            onChange={(e) => setAcceptedTerms(e.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-[var(--auth-input-border)] bg-[var(--auth-input-bg)] text-[#0066ff] accent-[#0066ff] cursor-pointer"
+          />
+          <span className="text-[0.75rem] leading-relaxed text-[var(--auth-text-muted)]">
+            Ich akzeptiere die{" "}
+            <a href={`${process.env.NEXT_PUBLIC_MARKETING_URL ?? "https://propgate.de"}/agb`} target="_blank" rel="noopener noreferrer" className="text-[#0066ff] hover:text-[#4da6ff] underline underline-offset-2">
+              AGB
+            </a>{" "}
+            und habe die{" "}
+            <a href={`${process.env.NEXT_PUBLIC_MARKETING_URL ?? "https://propgate.de"}/datenschutz`} target="_blank" rel="noopener noreferrer" className="text-[#0066ff] hover:text-[#4da6ff] underline underline-offset-2">
+              Datenschutzerklaerung
+            </a>{" "}
+            zur Kenntnis genommen.
+          </span>
+        </label>
+
         <div className="pt-1">
-          <AuthButton loading={loading}>
+          <AuthButton loading={loading} disabled={!acceptedTerms}>
             {loading
               ? "Account wird erstellt…"
               : isTrial

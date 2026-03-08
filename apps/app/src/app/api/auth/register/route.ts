@@ -41,11 +41,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { name, company, email, password, plan, billing, referralCode } =
+    const { name, company, email, password, plan, billing, referralCode, acceptedTerms } =
       await req.json();
 
     if (!name || !email || !password) {
       return NextResponse.json({ error: "Alle Felder sind erforderlich" }, { status: 400 });
+    }
+
+    if (!acceptedTerms) {
+      return NextResponse.json({ error: "Sie muessen die AGB und Datenschutzerklaerung akzeptieren." }, { status: 400 });
     }
 
     const passwordValidation = validatePassword(password);

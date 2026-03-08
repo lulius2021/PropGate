@@ -85,6 +85,15 @@ export function AuthCard({ children, wide }: { children: ReactNode; wide?: boole
           </div>
         </div>
 
+        {/* Legal links */}
+        <nav className="mt-3 flex items-center justify-center gap-2 text-[0.7rem] text-[var(--auth-text-muted)]" aria-label="Rechtliches">
+          <a href={`${marketingUrl}/impressum`} target="_blank" rel="noopener noreferrer" className="hover:text-[#4da6ff] transition">Impressum</a>
+          <span className="opacity-40">·</span>
+          <a href={`${marketingUrl}/datenschutz`} target="_blank" rel="noopener noreferrer" className="hover:text-[#4da6ff] transition">Datenschutz</a>
+          <span className="opacity-40">·</span>
+          <a href={`${marketingUrl}/agb`} target="_blank" rel="noopener noreferrer" className="hover:text-[#4da6ff] transition">AGB</a>
+        </nav>
+
       </div>{/* end card column */}
     </div>
   );

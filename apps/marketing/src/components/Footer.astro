@@ -13,7 +13,7 @@ const year = new Date().getFullYear();
       <!-- Links: Logo + Social Icons -->
       <div class="footer-left">
         <a href="/" class="footer-logo" aria-label="PropGate">
-          <img src="/logo-solid.png" alt="PropGate" class="footer-logo-img" style="width:26px;height:26px;border-radius:6px" />
+          <img src="/logo.png" alt="PropGate" class="footer-logo-img" />
           <span class="footer-logo-text">Prop<span class="footer-logo-accent">Gate</span></span>
         </a>
         <div class="footer-social">
@@ -49,6 +49,8 @@ const year = new Date().getFullYear();
         <a href="/impressum" class="footer-link">Impressum</a>
         <span class="footer-dot" aria-hidden="true">·</span>
         <a href="/datenschutz" class="footer-link">Datenschutz</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/agb" class="footer-link">AGB</a>
       </nav>
 
       <!-- Rechts: Made in Germany + Copyright -->
@@ -138,6 +140,7 @@ const year = new Date().getFullYear();
   .footer-logo-img {
     width: 26px; height: 26px;
     border-radius: 6px;
+    object-fit: contain;
     transition: filter 0.2s ease;
   }
 

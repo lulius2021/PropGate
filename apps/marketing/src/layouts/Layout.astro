@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { APP_URL } from '../config/urls';
+import CookieBanner from '../components/CookieBanner.astro';
 
 interface Props {
   title: string;
@@ -105,6 +106,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <!-- Theme wipe overlay -->
     <div id="theme-overlay" aria-hidden="true"></div>
     <slot />
+    <CookieBanner />
 
     <!-- Sync theme to all app links so login/register open with the same theme -->
     <script is:inline>

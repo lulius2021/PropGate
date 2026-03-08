@@ -1,0 +1,531 @@
+---
+// Cookie consent banner – DSGVO-konform
+// "Alle akzeptieren", "Nur notwendige" und "Cookies verwalten" mit Detail-Panel.
+// Auswahl wird in localStorage gespeichert.
+---
+
+<!-- Banner -->
+<div id="cookie-banner" class="cb" role="dialog" aria-label="Cookie-Einstellungen" aria-hidden="true">
+  <div class="cb-backdrop" id="cb-backdrop"></div>
+
+  <div class="cb-card" id="cb-card">
+    <!-- Hauptansicht -->
+    <div class="cb-main" id="cb-main">
+      <div class="cb-icon-row">
+        <div class="cb-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"/>
+            <circle cx="8.5" cy="8.5" r="1" fill="currentColor" stroke="none"/>
+            <circle cx="11" cy="14" r="1" fill="currentColor" stroke="none"/>
+            <circle cx="15.5" cy="11.5" r="1" fill="currentColor" stroke="none"/>
+          </svg>
+        </div>
+        <h2 class="cb-title">Cookie-Einstellungen</h2>
+      </div>
+
+      <p class="cb-text">
+        Wir nutzen Cookies und aehnliche Technologien. Einige sind technisch notwendig, andere helfen uns,
+        die Website zu verbessern. Weitere Details finden Sie in unserer
+        <a href="/datenschutz">Datenschutzerklaerung</a>.
+      </p>
+
+      <div class="cb-buttons">
+        <button id="cb-accept-all" class="cb-btn cb-btn-primary" type="button">
+          Alle akzeptieren
+        </button>
+        <button id="cb-accept-necessary" class="cb-btn cb-btn-secondary" type="button">
+          Nur notwendige
+        </button>
+        <button id="cb-manage" class="cb-btn cb-btn-link" type="button">
+          Cookies verwalten
+        </button>
+      </div>
+    </div>
+
+    <!-- Detail-Ansicht (Cookies verwalten) -->
+    <div class="cb-detail" id="cb-detail" style="display:none">
+      <div class="cb-icon-row">
+        <button id="cb-back" class="cb-back" type="button" aria-label="Zurueck">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        <h2 class="cb-title">Cookies verwalten</h2>
+      </div>
+
+      <p class="cb-text cb-text-small">
+        Hier koennen Sie Ihre Cookie-Praeferenzen im Detail anpassen.
+      </p>
+
+      <!-- Notwendige Cookies -->
+      <div class="cb-category">
+        <div class="cb-cat-header">
+          <div class="cb-cat-info">
+            <span class="cb-cat-name">Technisch notwendig</span>
+            <span class="cb-cat-badge">Immer aktiv</span>
+          </div>
+          <div class="cb-toggle cb-toggle-locked">
+            <div class="cb-toggle-track is-on">
+              <div class="cb-toggle-thumb"></div>
+            </div>
+          </div>
+        </div>
+        <p class="cb-cat-desc">
+          Diese Cookies sind fuer den Betrieb der Website zwingend erforderlich.
+          Dazu gehoeren Session-Cookies fuer die Authentifizierung und die Speicherung
+          Ihrer Theme-Praeferenz. Sie koennen nicht deaktiviert werden.
+        </p>
+      </div>
+
+      <!-- Analyse Cookies -->
+      <div class="cb-category">
+        <div class="cb-cat-header">
+          <div class="cb-cat-info">
+            <span class="cb-cat-name">Analyse & Statistik</span>
+          </div>
+          <div class="cb-toggle" id="cb-toggle-analytics">
+            <button type="button" class="cb-toggle-track" role="switch" aria-checked="false" aria-label="Analyse-Cookies">
+              <div class="cb-toggle-thumb"></div>
+            </button>
+          </div>
+        </div>
+        <p class="cb-cat-desc">
+          Diese Cookies helfen uns zu verstehen, wie Besucher die Website nutzen.
+          Alle Daten werden anonymisiert erfasst. Derzeit setzen wir keine Analyse-Cookies ein.
+        </p>
+      </div>
+
+      <!-- Marketing Cookies -->
+      <div class="cb-category">
+        <div class="cb-cat-header">
+          <div class="cb-cat-info">
+            <span class="cb-cat-name">Marketing & Werbung</span>
+          </div>
+          <div class="cb-toggle" id="cb-toggle-marketing">
+            <button type="button" class="cb-toggle-track" role="switch" aria-checked="false" aria-label="Marketing-Cookies">
+              <div class="cb-toggle-thumb"></div>
+            </button>
+          </div>
+        </div>
+        <p class="cb-cat-desc">
+          Diese Cookies werden verwendet, um Werbung relevanter zu gestalten.
+          Derzeit setzen wir keine Marketing-Cookies ein.
+        </p>
+      </div>
+
+      <div class="cb-buttons">
+        <button id="cb-save" class="cb-btn cb-btn-primary" type="button">
+          Auswahl speichern
+        </button>
+        <button id="cb-detail-accept-all" class="cb-btn cb-btn-secondary" type="button">
+          Alle akzeptieren
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const STORAGE_KEY = 'propgate-cookie-consent';
+    const banner = document.getElementById('cookie-banner') as HTMLElement | null;
+    if (!banner) return;
+
+    // Bereits entschieden? Nicht anzeigen
+    if (localStorage.getItem(STORAGE_KEY)) return;
+
+    const mainView = document.getElementById('cb-main') as HTMLElement;
+    const detailView = document.getElementById('cb-detail') as HTMLElement;
+    const card = document.getElementById('cb-card') as HTMLElement;
+
+    // Toggle-Buttons
+    const analyticsToggle = document.querySelector('#cb-toggle-analytics .cb-toggle-track') as HTMLElement;
+    const marketingToggle = document.querySelector('#cb-toggle-marketing .cb-toggle-track') as HTMLElement;
+
+    let analyticsOn = false;
+    let marketingOn = false;
+
+    function toggleSwitch(el: HTMLElement, state: boolean) {
+      el.classList.toggle('is-on', state);
+      el.setAttribute('aria-checked', String(state));
+    }
+
+    analyticsToggle?.addEventListener('click', () => {
+      analyticsOn = !analyticsOn;
+      toggleSwitch(analyticsToggle, analyticsOn);
+    });
+
+    marketingToggle?.addEventListener('click', () => {
+      marketingOn = !marketingOn;
+      toggleSwitch(marketingToggle, marketingOn);
+    });
+
+    // Consent speichern & Banner schliessen
+    function saveConsent(consent: { necessary: boolean; analytics: boolean; marketing: boolean }) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        ...consent,
+        timestamp: new Date().toISOString(),
+      }));
+      closeBanner();
+    }
+
+    function closeBanner() {
+      banner!.classList.remove('is-visible');
+      banner!.classList.add('is-hiding');
+      banner!.addEventListener('transitionend', () => {
+        banner!.remove();
+      }, { once: true });
+    }
+
+    // Banner anzeigen
+    requestAnimationFrame(() => {
+      banner.removeAttribute('aria-hidden');
+      banner.classList.add('is-visible');
+    });
+
+    // Alle akzeptieren
+    document.getElementById('cb-accept-all')?.addEventListener('click', () => {
+      saveConsent({ necessary: true, analytics: true, marketing: true });
+    });
+    document.getElementById('cb-detail-accept-all')?.addEventListener('click', () => {
+      saveConsent({ necessary: true, analytics: true, marketing: true });
+    });
+
+    // Nur notwendige
+    document.getElementById('cb-accept-necessary')?.addEventListener('click', () => {
+      saveConsent({ necessary: true, analytics: false, marketing: false });
+    });
+
+    // Auswahl speichern
+    document.getElementById('cb-save')?.addEventListener('click', () => {
+      saveConsent({ necessary: true, analytics: analyticsOn, marketing: marketingOn });
+    });
+
+    // View toggle
+    document.getElementById('cb-manage')?.addEventListener('click', () => {
+      mainView.style.display = 'none';
+      detailView.style.display = '';
+    });
+    document.getElementById('cb-back')?.addEventListener('click', () => {
+      detailView.style.display = 'none';
+      mainView.style.display = '';
+    });
+  })();
+</script>
+
+<style>
+  /* ── Banner wrapper ─────────────────────────────────── */
+  .cb {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 1rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+
+  .cb.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .cb.is-visible .cb-card {
+    transform: translateY(0);
+  }
+
+  .cb.is-hiding {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* ── Backdrop ───────────────────────────────────────── */
+  .cb-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  /* ── Card ────────────────────────────────────────────── */
+  .cb-card {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    border-radius: 20px;
+    background: var(--bg-card);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--border-card);
+    box-shadow:
+      0 16px 48px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+    padding: 1.5rem;
+    transform: translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* ── Icon row ───────────────────────────────────────── */
+  .cb-icon-row {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .cb-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(0, 102, 255, 0.1);
+    color: #4da6ff;
+    flex-shrink: 0;
+  }
+
+  .cb-title {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--heading);
+    letter-spacing: -0.02em;
+  }
+
+  .cb-back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border-card);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .cb-back:hover {
+    color: var(--heading);
+    border-color: var(--border);
+    background: var(--bg-card);
+  }
+
+  /* ── Text ────────────────────────────────────────────── */
+  .cb-text {
+    font-size: 0.8125rem;
+    line-height: 1.65;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+  }
+
+  .cb-text-small {
+    margin-bottom: 1rem;
+  }
+
+  .cb-text a {
+    color: #0066ff;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .cb-text a:hover {
+    color: #4da6ff;
+  }
+
+  /* ── Buttons ─────────────────────────────────────────── */
+  .cb-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .cb-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem 1.25rem;
+    border-radius: 12px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+
+  .cb-btn-primary {
+    flex: 1;
+    background: #0066ff;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 102, 255, 0.3);
+  }
+
+  .cb-btn-primary:hover {
+    background: #0052cc;
+    box-shadow: 0 4px 16px rgba(0, 102, 255, 0.4);
+    transform: translateY(-1px);
+  }
+
+  .cb-btn-secondary {
+    flex: 1;
+    background: var(--bg-card);
+    color: var(--text-muted);
+    border: 1px solid var(--border-card);
+  }
+
+  .cb-btn-secondary:hover {
+    color: var(--heading);
+    border-color: var(--border);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .cb-btn-link {
+    width: 100%;
+    background: transparent;
+    color: var(--text-subtle, #6b7280);
+    font-weight: 500;
+    padding: 0.375rem;
+    font-size: 0.75rem;
+  }
+
+  .cb-btn-link:hover {
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* ── Category rows (detail view) ─────────────────────── */
+  .cb-category {
+    padding: 0.875rem 0;
+    border-top: 1px solid var(--border-card);
+  }
+
+  .cb-category:last-of-type {
+    margin-bottom: 1rem;
+  }
+
+  .cb-cat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.375rem;
+  }
+
+  .cb-cat-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .cb-cat-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--heading);
+  }
+
+  .cb-cat-badge {
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+    padding: 0.15rem 0.5rem;
+    border-radius: 100px;
+  }
+
+  .cb-cat-desc {
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: var(--text-subtle, #6b7280);
+  }
+
+  /* ── Toggle switch ───────────────────────────────────── */
+  .cb-toggle-track {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    border-radius: 11px;
+    border: 1px solid var(--border-card);
+    background: rgba(255, 255, 255, 0.06);
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  .cb-toggle-track.is-on {
+    background: #0066ff;
+    border-color: #0066ff;
+  }
+
+  .cb-toggle-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .cb-toggle-track.is-on .cb-toggle-thumb {
+    transform: translateX(18px);
+  }
+
+  .cb-toggle-locked {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  /* ── Light theme ─────────────────────────────────────── */
+  :global(html[data-theme="light"]) .cb-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow:
+      0 16px 48px rgba(0, 0, 0, 0.12),
+      0 0 0 1px rgba(0, 0, 0, 0.04) inset;
+  }
+
+  :global(html[data-theme="light"]) .cb-backdrop {
+    background: rgba(0, 0, 0, 0.25);
+  }
+
+  :global(html[data-theme="light"]) .cb-btn-secondary {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  :global(html[data-theme="light"]) .cb-btn-secondary:hover {
+    background: #f9fafb;
+    border-color: rgba(0, 0, 0, 0.15);
+  }
+
+  :global(html[data-theme="light"]) .cb-toggle-track:not(.is-on) {
+    background: rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.12);
+  }
+
+  /* ── Mobile ──────────────────────────────────────────── */
+  @media (max-width: 480px) {
+    .cb { padding: 0.75rem; }
+
+    .cb-card { padding: 1.25rem; }
+
+    .cb-buttons { flex-direction: column; }
+
+    .cb-btn-primary,
+    .cb-btn-secondary { flex: none; width: 100%; }
+  }
+</style>
