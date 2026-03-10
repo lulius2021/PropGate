@@ -21,7 +21,6 @@ import {
   Gauge,
   CalendarCheck,
   BarChart3,
-  LineChart,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -61,7 +60,6 @@ const navGroups = [
     label: "ANALYSE",
     items: [
       { name: "Reporting", href: "/reporting", icon: BarChart3 },
-      { name: "Chart Analysis", href: "/analyze", icon: LineChart },
     ],
   },
   {
@@ -109,7 +107,7 @@ export function Sidebar({ userInitials, userName }: { userInitials?: string; use
           <div className="flex items-center gap-2.5 overflow-hidden">
             <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl overflow-hidden shadow-[0_0_20px_rgba(59,130,246,0.45)]">
               <Image
-                src="/icon-512.png"
+                src="/logo.png"
                 alt="PropGate Logo"
                 width={36}
                 height={36}
@@ -123,7 +121,7 @@ export function Sidebar({ userInitials, userName }: { userInitials?: string; use
         {collapsed && (
           <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl overflow-hidden shadow-[0_0_20px_rgba(59,130,246,0.45)] mx-auto">
             <Image
-              src="/icon-512.png"
+              src="/logo.png"
               alt="PropGate Logo"
               width={36}
               height={36}
