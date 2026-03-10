@@ -1,9 +1,0 @@
-# PropertyOS - Robots.txt
-# Allow all crawlers
-
-User-agent: *
-Allow: /
-
-# Sitemap
-Sitemap: https://propertyos.de/sitemap-index.xml
-Sitemap: https://propertyos.de/sitemap-0.xml

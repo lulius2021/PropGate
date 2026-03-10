@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { randomBytes } from "crypto";
 import { db } from "@/lib/db";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { sendPasswordResetEmail } from "@/server/services/email.service";
 
 export async function POST(req: NextRequest) {
   try {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-    const { allowed, resetIn } = checkRateLimit(`forgot-password:${ip}`, 3, 15 * 60 * 1000);
+    const { allowed, resetIn } = await checkRateLimit(`forgot-password:${ip}`, 3, 15 * 60 * 1000);
     if (!allowed) {
       return NextResponse.json(
         { error: `Zu viele Anfragen. Versuchen Sie es in ${resetIn} Sekunden erneut.` },
@@ -25,8 +26,7 @@ export async function POST(req: NextRequest) {
 
     // Always return success to prevent email enumeration
     const successResponse = NextResponse.json({
-      message:
-        "Falls ein Account mit dieser E-Mail existiert, wurde ein Reset-Link versendet.",
+      message: "Falls ein Account mit dieser E-Mail existiert, wurde ein Reset-Link versendet.",
     });
 
     const user = await db.user.findFirst({ where: { email } });
@@ -34,7 +34,6 @@ export async function POST(req: NextRequest) {
       return successResponse;
     }
 
-    // Generate reset token
     const token = randomBytes(32).toString("hex");
     const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
@@ -46,12 +45,16 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Send reset link via email (TODO: configure Resend)
-    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+    const baseUrl = process.env.NEXTAUTH_URL || "https://app.propgate.de";
     const resetUrl = `${baseUrl}/reset-password?token=${token}`;
-    // Only log in development, never in production
+
     if (process.env.NODE_ENV === "development") {
       console.log(`[Password Reset] Link for ${email}: ${resetUrl}`);
+    }
+
+    const emailResult = await sendPasswordResetEmail(email, resetUrl);
+    if (!emailResult.success) {
+      console.error("Failed to send password reset email:", emailResult.error);
     }
 
     return successResponse;

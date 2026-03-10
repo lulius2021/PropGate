@@ -1,51 +1,59 @@
 import { z } from "zod";
 import { router, protectedProcedure, writeProcedure } from "../trpc";
 import { logAudit } from "../middleware/audit";
+import { uploadToR2, generateR2Key } from "@/lib/r2";
+
+const mimeTypeEnum = z.enum([
+  "application/pdf",
+  "image/png",
+  "image/jpeg",
+  "image/webp",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "text/csv",
+]);
+
+const typEnum = z.enum([
+  "MIETVERTRAG",
+  "MAHNUNG",
+  "RECHNUNG",
+  "ZAEHLERABLESUNG",
+  "DARLEHEN",
+  "SONSTIGES",
+]);
+
+const uploadBaseSchema = z.object({
+  dateiname: z.string().max(255),
+  mimeType: mimeTypeEnum,
+  dateiinhalt: z.string().max(14_000_000), // base64, wird zu R2 hochgeladen
+  groesse: z.number().max(10 * 1024 * 1024),
+  typ: typEnum,
+  objektId: z.string().optional(),
+  einheitId: z.string().optional(),
+  mieterId: z.string().optional(),
+  mietverhaeltnisId: z.string().optional(),
+  notiz: z.string().optional(),
+  faelligkeitsdatum: z.date().optional(),
+  fristTyp: z.string().optional(),
+  schlagworte: z.string().optional(),
+});
 
 export const dokumenteRouter = router({
   upload: writeProcedure
-    .input(
-      z.object({
-        dateiname: z.string().max(255),
-        mimeType: z.enum([
-          "application/pdf",
-          "image/png",
-          "image/jpeg",
-          "image/webp",
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          "text/csv",
-        ]),
-        dateiinhalt: z.string().max(14_000_000), // ~10MB base64
-        groesse: z.number().max(10 * 1024 * 1024),
-        typ: z.enum([
-          "MIETVERTRAG",
-          "MAHNUNG",
-          "RECHNUNG",
-          "ZAEHLERABLESUNG",
-          "DARLEHEN",
-          "SONSTIGES",
-        ]),
-        objektId: z.string().optional(),
-        einheitId: z.string().optional(),
-        mieterId: z.string().optional(),
-        mietverhaeltnisId: z.string().optional(),
-        notiz: z.string().optional(),
-        version: z.number().optional(),
-        faelligkeitsdatum: z.date().optional(),
-        fristTyp: z.string().optional(),
-        schlagworte: z.string().optional(),
-      })
-    )
+    .input(uploadBaseSchema.extend({ version: z.number().optional() }))
     .mutation(async ({ ctx, input }) => {
+      const buffer = Buffer.from(input.dateiinhalt, "base64");
+      const s3Key = generateR2Key(ctx.tenantId, "dokumente", input.dateiname);
+      await uploadToR2(s3Key, buffer, input.mimeType);
+
       return ctx.db.dokument.create({
         data: {
           tenantId: ctx.tenantId,
           dateiname: input.dateiname,
           mimeType: input.mimeType,
           groesse: input.groesse,
-          dateiinhalt: input.dateiinhalt,
-          s3Key: `${ctx.tenantId}/${Date.now()}-${input.dateiname}`,
+          dateiinhalt: null, // nicht in DB speichern — liegt in R2
+          s3Key,
           typ: input.typ,
           objektId: input.objektId,
           einheitId: input.einheitId,
@@ -76,47 +84,31 @@ export const dokumenteRouter = router({
           objektId: input?.objektId,
           einheitId: input?.einheitId,
         },
+        select: {
+          id: true,
+          dateiname: true,
+          mimeType: true,
+          groesse: true,
+          s3Key: true,
+          typ: true,
+          objektId: true,
+          einheitId: true,
+          mieterId: true,
+          mietverhaeltnisId: true,
+          notiz: true,
+          version: true,
+          vorgaengerId: true,
+          faelligkeitsdatum: true,
+          fristTyp: true,
+          schlagworte: true,
+          hochgeladenAm: true,
+        },
         orderBy: { hochgeladenAm: "desc" },
       });
     }),
 
-  /**
-   * Neue Version eines Dokuments hochladen
-   */
   uploadNewVersion: writeProcedure
-    .input(
-      z.object({
-        dateiname: z.string().max(255),
-        mimeType: z.enum([
-          "application/pdf",
-          "image/png",
-          "image/jpeg",
-          "image/webp",
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          "text/csv",
-        ]),
-        dateiinhalt: z.string().max(14_000_000),
-        groesse: z.number().max(10 * 1024 * 1024),
-        typ: z.enum([
-          "MIETVERTRAG",
-          "MAHNUNG",
-          "RECHNUNG",
-          "ZAEHLERABLESUNG",
-          "DARLEHEN",
-          "SONSTIGES",
-        ]),
-        objektId: z.string().optional(),
-        einheitId: z.string().optional(),
-        mieterId: z.string().optional(),
-        mietverhaeltnisId: z.string().optional(),
-        notiz: z.string().optional(),
-        faelligkeitsdatum: z.date().optional(),
-        fristTyp: z.string().optional(),
-        schlagworte: z.string().optional(),
-        vorgaengerId: z.string(),
-      })
-    )
+    .input(uploadBaseSchema.extend({ vorgaengerId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const vorgaenger = await ctx.db.dokument.findUnique({
         where: { id: input.vorgaengerId, tenantId: ctx.tenantId },
@@ -127,14 +119,18 @@ export const dokumenteRouter = router({
         throw new Error("Vorgänger-Dokument nicht gefunden");
       }
 
+      const buffer = Buffer.from(input.dateiinhalt, "base64");
+      const s3Key = generateR2Key(ctx.tenantId, "dokumente", input.dateiname);
+      await uploadToR2(s3Key, buffer, input.mimeType);
+
       const dokument = await ctx.db.dokument.create({
         data: {
           tenantId: ctx.tenantId,
           dateiname: input.dateiname,
           mimeType: input.mimeType,
           groesse: input.groesse,
-          dateiinhalt: input.dateiinhalt,
-          s3Key: `${ctx.tenantId}/${Date.now()}-${input.dateiname}`,
+          dateiinhalt: null,
+          s3Key,
           typ: input.typ,
           objektId: input.objektId,
           einheitId: input.einheitId,
@@ -161,26 +157,19 @@ export const dokumenteRouter = router({
       return dokument;
     }),
 
-  /**
-   * Versionshistorie eines Dokuments abrufen
-   */
   getVersionHistory: protectedProcedure
     .input(z.object({ dokumentId: z.string() }))
     .query(async ({ ctx, input }) => {
       const dokument = await ctx.db.dokument.findUnique({
         where: { id: input.dokumentId, tenantId: ctx.tenantId },
-        include: {
-          vorgaenger: true,
-          nachfolger: true,
-        },
+        include: { vorgaenger: true, nachfolger: true },
       });
 
       if (!dokument) {
         throw new Error("Dokument nicht gefunden");
       }
 
-      // Collect the full version chain by walking backwards then forwards
-      // Walk backwards to the root
+      // Walk backwards to root
       let current = dokument;
       while (current.vorgaenger) {
         current = await ctx.db.dokument.findUnique({
@@ -190,20 +179,15 @@ export const dokumenteRouter = router({
         if (!current) break;
       }
 
-      // Now walk forward from root collecting all versions
       const rootId = current.id;
       const allVersions = await ctx.db.dokument.findMany({
         where: {
           tenantId: ctx.tenantId,
-          OR: [
-            { id: rootId },
-            { vorgaengerId: rootId },
-          ],
+          OR: [{ id: rootId }, { vorgaengerId: rootId }],
         },
         orderBy: { version: "asc" },
       });
 
-      // For deeper chains, iteratively collect
       if (allVersions.length > 0) {
         const collected = new Map(allVersions.map((d) => [d.id, d]));
         let foundNew = true;
@@ -225,17 +209,12 @@ export const dokumenteRouter = router({
             }
           }
         }
-        return Array.from(collected.values()).sort(
-          (a, b) => a.version - b.version
-        );
+        return Array.from(collected.values()).sort((a, b) => a.version - b.version);
       }
 
       return allVersions;
     }),
 
-  /**
-   * Dokumente mit Fälligkeitsdatum innerhalb der nächsten N Tage
-   */
   listByFrist: protectedProcedure
     .input(z.object({ tage: z.number() }))
     .query(async ({ ctx, input }) => {
@@ -246,10 +225,7 @@ export const dokumenteRouter = router({
       return ctx.db.dokument.findMany({
         where: {
           tenantId: ctx.tenantId,
-          faelligkeitsdatum: {
-            gte: now,
-            lte: bis,
-          },
+          faelligkeitsdatum: { gte: now, lte: bis },
         },
         orderBy: { faelligkeitsdatum: "asc" },
       });

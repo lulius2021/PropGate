@@ -73,6 +73,27 @@ export async function sendMahnungEmail(
   return sendEmail(mieterEmail, subject, html);
 }
 
+export async function sendPasswordResetEmail(
+  to: string,
+  resetUrl: string,
+): Promise<EmailResult> {
+  const subject = "Passwort zurücksetzen — PropGate";
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px;">
+      <h2>Passwort zurücksetzen</h2>
+      <p>Sie haben eine Anfrage zum Zurücksetzen Ihres Passworts gestellt.</p>
+      <p>Klicken Sie auf den folgenden Link, um ein neues Passwort festzulegen. Der Link ist <strong>1 Stunde</strong> gültig.</p>
+      <p style="margin: 24px 0;">
+        <a href="${resetUrl}" style="background-color: #0066ff; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+          Passwort zurücksetzen
+        </a>
+      </p>
+      <p style="color: #666; font-size: 13px;">Falls Sie diese Anfrage nicht gestellt haben, können Sie diese E-Mail ignorieren.</p>
+    </div>
+  `;
+  return sendEmail(to, subject, html);
+}
+
 export async function sendWartungserinnerung(
   aufgabeId: string,
   bezeichnung: string,

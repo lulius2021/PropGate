@@ -33,7 +33,7 @@ function isPaidPlan(plan: string): plan is PaidPlanId {
 export async function POST(req: NextRequest) {
   try {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-    const { allowed, resetIn } = checkRateLimit(`register:${ip}`, 5, 15 * 60 * 1000);
+    const { allowed, resetIn } = await checkRateLimit(`register:${ip}`, 5, 15 * 60 * 1000);
     if (!allowed) {
       return NextResponse.json(
         { error: `Zu viele Anfragen. Versuchen Sie es in ${resetIn} Sekunden erneut.` },
