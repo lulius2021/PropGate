@@ -53,6 +53,16 @@ import Footer from '../components/Footer.astro';
             Sie koennen eine bereits erteilte Einwilligung jederzeit widerrufen. Die Rechtmaessigkeit
             der bis zum Widerruf erfolgten Datenverarbeitung bleibt vom Widerruf unberuehrt.
           </p>
+          <h3>Widerspruchsrecht gegen Datenverarbeitung (Art. 21 DSGVO)</h3>
+          <p>
+            Sofern Ihre personenbezogenen Daten auf Grundlage von berechtigten Interessen gemaess
+            Art. 6 Abs. 1 lit. f DSGVO verarbeitet werden, haben Sie das Recht, gemaess Art. 21 DSGVO
+            Widerspruch gegen die Verarbeitung einzulegen. Legen Sie Widerspruch ein, werden wir Ihre
+            betroffenen personenbezogenen Daten nicht mehr verarbeiten, es sei denn, wir koennen
+            zwingende schutzwuerdige Gruende fuer die Verarbeitung nachweisen, die Ihre Interessen,
+            Rechte und Freiheiten ueberwiegen, oder die Verarbeitung dient der Geltendmachung,
+            Ausuebung oder Verteidigung von Rechtsanspruechen.
+          </p>
         </section>
 
         <!-- 4. Rechte -->
@@ -60,14 +70,18 @@ import Footer from '../components/Footer.astro';
           <h2>4. Ihre Rechte als betroffene Person</h2>
           <p>Sie haben gemaess DSGVO folgende Rechte:</p>
           <ul>
-            <li><strong>Auskunftsrecht (Art. 15 DSGVO):</strong> Sie haben das Recht, Auskunft ueber Ihre von uns verarbeiteten personenbezogenen Daten zu verlangen.</li>
-            <li><strong>Recht auf Berichtigung (Art. 16 DSGVO):</strong> Sie haben das Recht, die Berichtigung unrichtiger Daten zu verlangen.</li>
-            <li><strong>Recht auf Loeschung (Art. 17 DSGVO):</strong> Sie haben das Recht, die Loeschung Ihrer Daten zu verlangen, sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen.</li>
-            <li><strong>Recht auf Einschraenkung (Art. 18 DSGVO):</strong> Sie haben das Recht, die Einschraenkung der Verarbeitung Ihrer Daten zu verlangen.</li>
-            <li><strong>Recht auf Datenuebertragbarkeit (Art. 20 DSGVO):</strong> Sie haben das Recht, Ihre Daten in einem strukturierten, gaengigen und maschinenlesbaren Format zu erhalten.</li>
-            <li><strong>Widerspruchsrecht (Art. 21 DSGVO):</strong> Sie haben das Recht, der Verarbeitung Ihrer Daten jederzeit zu widersprechen.</li>
-            <li><strong>Beschwerderecht (Art. 77 DSGVO):</strong> Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbehoerde ueber die Verarbeitung Ihrer personenbezogenen Daten zu beschweren.</li>
+            <li><strong>Auskunftsrecht (Art. 15 DSGVO):</strong> Sie haben das Recht, unentgeltlich Auskunft ueber Ihre von uns verarbeiteten personenbezogenen Daten zu verlangen, einschliesslich der Verarbeitungszwecke, Kategorien, Empfaenger und geplanten Speicherdauer.</li>
+            <li><strong>Recht auf Berichtigung (Art. 16 DSGVO):</strong> Sie haben das Recht, die unverzuegliche Berichtigung unrichtiger oder Vervollstaendigung unvollstaendiger Daten zu verlangen.</li>
+            <li><strong>Recht auf Loeschung (Art. 17 DSGVO):</strong> Sie haben das Recht, die Loeschung Ihrer Daten zu verlangen, sofern keine gesetzlichen Aufbewahrungspflichten oder berechtigten Interessen entgegenstehen.</li>
+            <li><strong>Recht auf Einschraenkung (Art. 18 DSGVO):</strong> Sie haben das Recht, die Einschraenkung der Verarbeitung Ihrer Daten zu verlangen, z.&nbsp;B. wenn Sie die Richtigkeit der Daten bestreiten.</li>
+            <li><strong>Recht auf Datenuebertragbarkeit (Art. 20 DSGVO):</strong> Sie haben das Recht, Ihre Daten in einem strukturierten, gaengigen und maschinenlesbaren Format (JSON) zu erhalten oder die Uebermittlung an einen anderen Verantwortlichen zu verlangen. PropGate stellt hierfuer eine Export-Funktion in der Anwendung bereit.</li>
+            <li><strong>Widerspruchsrecht (Art. 21 DSGVO):</strong> Sie haben das Recht, der Verarbeitung Ihrer Daten jederzeit zu widersprechen, sofern die Verarbeitung auf Art. 6 Abs. 1 lit. e oder f DSGVO beruht.</li>
+            <li><strong>Beschwerderecht (Art. 77 DSGVO):</strong> Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbehoerde ueber die Verarbeitung Ihrer personenbezogenen Daten zu beschweren. Zustaendige Aufsichtsbehoerde ist das Bayerische Landesamt fuer Datenschutzaufsicht (BayLDA), Promenade 18, 91522 Ansbach.</li>
           </ul>
+          <p>
+            Zur Ausuebung Ihrer Rechte wenden Sie sich bitte an: info@propgate.de. Wir werden Ihre
+            Anfrage innerhalb eines Monats beantworten.
+          </p>
         </section>
 
         <!-- 5. Hosting -->
@@ -102,7 +116,7 @@ import Footer from '../components/Footer.astro';
             <li>Referrer URL</li>
             <li>Hostname des zugreifenden Rechners</li>
             <li>Uhrzeit der Serveranfrage</li>
-            <li>IP-Adresse</li>
+            <li>IP-Adresse (wird von Vercel nach spaetestens 30 Tagen geloescht)</li>
           </ul>
           <p>
             Eine Zusammenfuehrung dieser Daten mit anderen Datenquellen wird nicht vorgenommen.
@@ -113,15 +127,30 @@ import Footer from '../components/Footer.astro';
 
           <h3>Cookies</h3>
           <p>
-            Unsere Website verwendet ausschliesslich technisch notwendige Cookies. Dabei handelt es sich um:
+            Unsere Website verwendet ausschliesslich technisch notwendige Cookies:
           </p>
           <ul>
-            <li><strong>Session-Cookie:</strong> Zur Authentifizierung in der Anwendung (httpOnly, Secure, SameSite: Lax). Lebensdauer: 24 Stunden.</li>
-            <li><strong>Theme-Praeferenz:</strong> Speicherung Ihrer Darstellungspraeferenz (hell/dunkel) im localStorage. Es handelt sich hierbei nicht um einen Cookie, sondern um eine lokale Speicherung im Browser.</li>
+            <li><strong>Session-Cookie (<code>authjs.session-token</code> bzw. <code>__Secure-authjs.session-token</code>):</strong> Zur Authentifizierung in der Anwendung. Attribute: httpOnly, Secure (in Produktion), SameSite: Lax. Lebensdauer: 24 Stunden. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragserfuellung).</li>
+            <li><strong>Cookie-Einwilligung (<code>cookie-consent</code>):</strong> Speichert Ihre Cookie-Praeferenz im localStorage. Lebensdauer: 365 Tage.</li>
           </ul>
           <p>
-            Es werden keine Tracking-, Analyse- oder Marketing-Cookies eingesetzt. Die Verwendung
-            technisch notwendiger Cookies erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO.
+            Es werden <strong>keine</strong> Tracking-, Analyse- oder Marketing-Cookies eingesetzt.
+            Es werden keine Daten an Werbenetzwerke oder Analyse-Dienste uebermittelt. Die Verwendung
+            technisch notwendiger Cookies erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO
+            (berechtigtes Interesse) sowie &sect; 25 Abs. 2 Nr. 2 TDDDG.
+          </p>
+
+          <h3>Lokale Speicherung (localStorage)</h3>
+          <p>
+            Wir nutzen den lokalen Speicher Ihres Browsers (localStorage) fuer folgende technische Zwecke:
+          </p>
+          <ul>
+            <li><strong>Theme-Praeferenz:</strong> Speicherung Ihrer Darstellungspraeferenz (hell/dunkel).</li>
+            <li><strong>Cookie-Einwilligung:</strong> Speicherung Ihrer Auswahl im Cookie-Banner.</li>
+          </ul>
+          <p>
+            Diese Daten werden ausschliesslich lokal in Ihrem Browser gespeichert und nicht an unsere
+            Server uebermittelt.
           </p>
         </section>
 
@@ -132,15 +161,12 @@ import Footer from '../components/Footer.astro';
             Bei der Registrierung fuer PropGate erheben wir folgende Daten:
           </p>
           <ul>
+            <li>Vor- und Nachname</li>
             <li>E-Mail-Adresse</li>
-            <li>Name</li>
-            <li>Passwort (wird nur als kryptographischer Hash mittels bcrypt gespeichert, nicht im Klartext)</li>
-          </ul>
-          <p>
-            Optional koennen Sie zusaetzlich aktivieren:
-          </p>
-          <ul>
-            <li>Zwei-Faktor-Authentifizierung (TOTP) &ndash; dabei werden ein verschluesseltes Geheimnis und Recovery-Codes gespeichert</li>
+            <li>Firmenname (optional)</li>
+            <li>Passwort (wird ausschliesslich als kryptographischer Hash mittels bcrypt mit Kostenfaktor 12 gespeichert &ndash; das Klartext-Passwort wird zu keinem Zeitpunkt gespeichert)</li>
+            <li>Gewahlter Tarif und Abrechnungsintervall</li>
+            <li>Referral-Code (optional, sofern Sie durch eine Empfehlung kommen)</li>
           </ul>
           <p>
             Rechtsgrundlage fuer die Verarbeitung ist Art. 6 Abs. 1 lit. b DSGVO (Vertragserfuellung).
@@ -152,6 +178,21 @@ import Footer from '../components/Footer.astro';
             5 fehlgeschlagenen Versuchen wird das Konto fuer 15 Minuten gesperrt. Diese Massnahme
             dient dem Schutz vor unbefugtem Zugriff (Art. 6 Abs. 1 lit. f DSGVO).
           </p>
+
+          <h3>Zwei-Faktor-Authentifizierung (optional)</h3>
+          <p>
+            Sie koennen optional eine Zwei-Faktor-Authentifizierung (2FA/TOTP) aktivieren. Dabei werden
+            ein verschluesseltes Geheimnis (TOTP Secret) und einmalige Recovery-Codes in der Datenbank
+            gespeichert. Die Aktivierung und Deaktivierung erfolgt freiwillig ueber Ihre Kontoeinstellungen.
+            Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO (Einwilligung).
+          </p>
+
+          <h3>Passwort-Zuruecksetzung</h3>
+          <p>
+            Bei einer Passwort-Zuruecksetzung wird ein kryptographisch sicherer Token generiert und
+            fuer maximal 1 Stunde in der Datenbank gespeichert. Nach Ablauf oder erfolgreicher
+            Zuruecksetzung wird der Token geloescht.
+          </p>
         </section>
 
         <!-- 8. Datenverarbeitung in der Anwendung -->
@@ -162,84 +203,177 @@ import Footer from '../components/Footer.astro';
             folgende Kategorien personenbezogener Daten verarbeitet:
           </p>
           <ul>
-            <li><strong>Objektdaten:</strong> Adressen, Eigentuemer, Vertraege, Heizsysteme, Wasserversorgung</li>
-            <li><strong>Mieterdaten:</strong> Namen, Kontaktdaten, Mietvertraege, Zahlungshistorie</li>
-            <li><strong>Einheitendaten:</strong> Einheitsnummern, Standort, Mietstatus</li>
-            <li><strong>Finanzdaten:</strong> Rechnungen, Zahlungen, Bankimporte, Kosten</li>
-            <li><strong>Zaehlerstaende:</strong> Ablesungshistorie</li>
-            <li><strong>Tickets:</strong> Wartungsanfragen und deren Bearbeitungsstatus</li>
-            <li><strong>Dokumente:</strong> Hochgeladene Dateien (Vertraege, Belege etc.)</li>
+            <li><strong>Objektdaten:</strong> Adressen, Eigentuemer, Verwaltervertraege, technische Ausstattung, Bankverbindungen, Versorgerdaten</li>
+            <li><strong>Mieterdaten:</strong> Namen, Kontaktdaten (Telefon, E-Mail), Anschrift, Geburtsdatum, IBAN, Notfallkontakt, Mitmieter, Ausweisdaten, Bonitaetsstatus, DSGVO-Einwilligungsstatus</li>
+            <li><strong>Mietvertragsdaten:</strong> Vertragsnummern, Laufzeiten, Miethoehen, Kautionsdaten, Staffel-/Indexmiete, Sondervereinbarungen, Uebergabeprotokolle, Zaehlerstaende</li>
+            <li><strong>Finanzdaten:</strong> Sollstellungen, Zahlungen, Bank-CSV-Importe (inkl. IBAN, Verwendungszweck, Betrag), Zahlungszuordnungen, Gutschriften, Mahnungen</li>
+            <li><strong>Zaehlerstaende:</strong> Ablesungswerte, Fotos, Einzugs-/Auszugsstaende</li>
+            <li><strong>Tickets:</strong> Schadensmeldungen, Wartungsanfragen, Kommentare, Dienstleister-Zuordnungen</li>
+            <li><strong>Dokumente:</strong> Hochgeladene Dateien (Vertraege, Belege, Rechnungen) mit Metadaten (Typ, Version, Schlagworte, Fristen)</li>
+            <li><strong>Kreditdaten:</strong> Darlehensinformationen, Tilgungsplaene, Sondertilgungen</li>
+            <li><strong>Nebenkostenabrechnungen:</strong> Kostenpositionen, Umlageschluessel, Mieterpositionen</li>
+            <li><strong>Wartungsplaene:</strong> Aufgaben, Intervalle, Verantwortliche</li>
+            <li><strong>Zeiterfassung:</strong> Datum, Dauer, Taetigkeit, Zuordnung</li>
           </ul>
           <p>
-            Diese Daten werden im Auftrag unserer Kunden (Immobilienverwaltungen) verarbeitet.
-            PropGate handelt hierbei als Auftragsverarbeiter gemaess Art. 28 DSGVO.
+            Sofern der Kunde als Immobilienverwaltung personenbezogene Daten Dritter (z.&nbsp;B. Mieterdaten)
+            in PropGate verarbeitet, handelt der Anbieter als <strong>Auftragsverarbeiter</strong> gemaess
+            Art. 28 DSGVO. In diesem Fall ist der Kunde als Verantwortlicher dafuer zustaendig, die
+            datenschutzrechtliche Zulaessigkeit der Verarbeitung sicherzustellen und seine Mieter
+            entsprechend zu informieren. Auf Anfrage stellen wir einen Auftragsverarbeitungsvertrag
+            (AVV) bereit.
+          </p>
+
+          <h3>Mandantentrennung (Multi-Tenancy)</h3>
+          <p>
+            Jeder Kunde erhaelt einen eigenen, isolierten Datenbereich (Mandant/Tenant). Auf Datenbankebene
+            wird sichergestellt, dass ein Kunde ausschliesslich auf seine eigenen Daten zugreifen kann.
+            Eine Einsicht in Daten anderer Kunden ist technisch ausgeschlossen.
+          </p>
+
+          <h3>Audit-Protokollierung</h3>
+          <p>
+            Alle datenveraendernden Aktionen (Erstellung, Aenderung, Loeschung) werden in einem
+            Audit-Log mit Zeitstempel, Benutzer-ID und Aenderungsdetails protokolliert. Dies dient der
+            Nachvollziehbarkeit und Sicherheit. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO
+            (berechtigtes Interesse an der Integritaet und Sicherheit der Daten).
+          </p>
+
+          <h3>Rollenbasierte Zugriffskontrolle</h3>
+          <p>
+            PropGate unterscheidet drei Benutzerrollen: Administrator (Vollzugriff), Sachbearbeiter
+            (Lese- und Schreibzugriff) und Nur-Lesen (ausschliesslich Lesezugriff). Die Rechtevergabe
+            erfolgt durch den Administrator des jeweiligen Mandanten.
           </p>
 
           <h3>Technische Sicherheitsmassnahmen</h3>
           <ul>
-            <li>Strikte Mandantentrennung auf Datenbankebene (Tenant-Isolation)</li>
-            <li>Verschluesselung sensibler Daten</li>
-            <li>Vollstaendige Audit-Logs fuer alle Aenderungen mit Zeitstempeln</li>
-            <li>Rollenbasierte Zugriffskontrolle (RBAC)</li>
-            <li>Automatische taegliche Backups</li>
-            <li>HTTPS/TLS fuer alle Datenuebertragungen</li>
+            <li>HTTPS/TLS-Verschluesselung fuer alle Datenuebertragungen</li>
+            <li>Strikte Mandantentrennung auf Datenbankebene</li>
+            <li>Passwoerter werden ausschliesslich als bcrypt-Hashes gespeichert</li>
+            <li>Vollstaendige Audit-Logs fuer alle datenveraendernden Aktionen</li>
+            <li>Rollenbasierte Zugriffskontrolle (RBAC) mit drei Berechtigungsstufen</li>
+            <li>Account-Sperrung nach fehlgeschlagenen Anmeldeversuchen</li>
+            <li>Optionale Zwei-Faktor-Authentifizierung (TOTP)</li>
+            <li>Security-Header: HSTS, Content-Security-Policy, X-Content-Type-Options, Referrer-Policy, Permissions-Policy</li>
             <li>EU-Rechenzentren (Frankfurt)</li>
           </ul>
         </section>
 
-        <!-- 9. Zahlungsabwicklung -->
+        <!-- 9. Oeffentliche Ticket-Seite -->
         <section>
-          <h2>9. Zahlungsabwicklung</h2>
+          <h2>9. Oeffentliche Ticket-Einreichung (Mieter-Intake)</h2>
+          <p>
+            PropGate bietet Immobilienverwaltungen die Moeglichkeit, oeffentlich zugaengliche Seiten
+            fuer Mieter einzurichten, ueber die Schadensmeldungen und Anfragen eingereicht werden koennen
+            (Ticket-Intake). Hierbei werden folgende Daten erhoben:
+          </p>
+          <ul>
+            <li>Kategorie der Meldung (Schadensmeldung, Wartung, Anfrage, Beschwerde)</li>
+            <li>Beschreibung des Anliegens</li>
+            <li>Kontaktname (freiwillig)</li>
+            <li>Telefonnummer (freiwillig)</li>
+          </ul>
+          <p>
+            Der Zugang erfolgt ueber einen individuellen, nicht erratbaren Token-Link. Fuer die
+            Einreichung ist keine Registrierung oder Anmeldung erforderlich. Die eingegebenen Daten
+            werden im Mandantenbereich der jeweiligen Immobilienverwaltung gespeichert.
+            Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (vorvertragliche Massnahmen) bzw.
+            Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Bearbeitung von Mieteranliegen).
+          </p>
+        </section>
+
+        <!-- 10. Zahlungsabwicklung -->
+        <section>
+          <h2>10. Zahlungsabwicklung</h2>
           <h3>Stripe</h3>
           <p>
-            Fuer die Zahlungsabwicklung nutzen wir den Dienst Stripe (Stripe Inc., 510 Townsend Street,
-            San Francisco, CA 94103, USA / Stripe Payments Europe, Ltd., 1 Grand Canal Street Lower,
-            Grand Canal Dock, Dublin, Irland).
+            Fuer die Zahlungsabwicklung nutzen wir den Dienst Stripe (Stripe Payments Europe, Ltd.,
+            1 Grand Canal Street Lower, Grand Canal Dock, Dublin, Irland / Stripe Inc.,
+            510 Townsend Street, San Francisco, CA 94103, USA).
           </p>
           <p>
             Bei einer Zahlung werden folgende Daten an Stripe uebermittelt:
           </p>
           <ul>
             <li>E-Mail-Adresse</li>
-            <li>Zahlungsinformationen (Kreditkarten- oder Kontodaten &ndash; diese werden ausschliesslich von Stripe verarbeitet und nicht auf unseren Servern gespeichert)</li>
-            <li>Rechnungsadresse</li>
+            <li>Firmen- oder Kundenname</li>
+            <li>Zahlungsinformationen (Kreditkarten- oder Kontodaten &ndash; diese werden ausschliesslich
+                von Stripe verarbeitet und <strong>nicht</strong> auf unseren Servern gespeichert)</li>
             <li>Bestellinformationen (gewahlter Plan, Abrechnungszeitraum)</li>
           </ul>
           <p>
-            Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Vertragserfuellung). Stripe ist unter dem
-            EU-US Data Privacy Framework zertifiziert. Naehere Informationen finden Sie in der
-            Datenschutzerklaerung von Stripe unter
+            PropGate speichert lediglich die Stripe-Kunden-ID und die Stripe-Abonnement-ID zur
+            Zuordnung Ihres Kontos. Zahlungsdaten (Kreditkartennummern, Kontodaten) werden zu keinem
+            Zeitpunkt auf unseren Servern gespeichert.
+          </p>
+          <p>
+            Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Vertragserfuellung). Stripe Payments Europe
+            ist in Irland ansaessig (EU). Fuer Datenuebermittlungen an Stripe Inc. (USA) ist Stripe
+            unter dem EU-US Data Privacy Framework zertifiziert. Naehere Informationen finden Sie unter
             <a href="https://stripe.com/de/privacy" target="_blank" rel="noopener noreferrer">https://stripe.com/de/privacy</a>.
           </p>
         </section>
 
-        <!-- 10. E-Mail-Versand -->
+        <!-- 11. Empfehlungsprogramm -->
         <section>
-          <h2>10. E-Mail-Versand</h2>
-          <h3>Resend</h3>
+          <h2>11. Empfehlungsprogramm (Referral)</h2>
           <p>
-            Fuer den Versand von System-E-Mails (z.&nbsp;B. Mahnungen, Wartungserinnerungen) nutzen
-            wir den Dienst Resend (Resend Inc., USA). Dabei werden folgende Daten an Resend uebermittelt:
+            PropGate bietet ein Empfehlungsprogramm, bei dem Kunden fuer erfolgreiche Weiterempfehlungen
+            Gutschriften erhalten koennen. Im Rahmen dieses Programms werden folgende Daten verarbeitet:
           </p>
           <ul>
-            <li>E-Mail-Adresse des Empfaengers</li>
-            <li>E-Mail-Inhalt</li>
+            <li><strong>Referral-Code:</strong> Ein eindeutiger Code, der Ihrem Konto bei der Registrierung zugewiesen wird.</li>
+            <li><strong>Referral-Zuordnung:</strong> Speicherung, welcher Code bei der Registrierung eines neuen Kunden verwendet wurde.</li>
+            <li><strong>Zahlungsmethoden-Fingerprint (gehasht):</strong> Zur Missbrauchspraevention wird ein SHA-256-Hash des
+                Stripe-Zahlungsmethoden-Fingerprints gespeichert. Damit wird verhindert, dass dieselbe Zahlungsmethode
+                mehrfach fuer Referral-Gutschriften verwendet wird. Eine Rueckverfolgung auf die tatsaechlichen
+                Zahlungsdaten ist nicht moeglich.</li>
           </ul>
           <p>
-            Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Vertragserfuellung) bzw. Art. 6 Abs. 1
-            lit. f DSGVO (berechtigtes Interesse an der Benachrichtigung unserer Nutzer).
-            E-Mails werden von der Adresse noreply@propgate.de versendet.
+            Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragserfuellung) fuer die Gutschriftenabwicklung
+            und Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Missbrauchspraevention) fuer das
+            Fingerprint-Hashing.
           </p>
         </section>
 
-        <!-- 11. Dateispeicherung -->
+        <!-- 12. E-Mail-Versand -->
         <section>
-          <h2>11. Dateispeicherung</h2>
+          <h2>12. E-Mail-Versand</h2>
+          <h3>Resend</h3>
+          <p>
+            Fuer den Versand von System-E-Mails nutzen wir den Dienst Resend (Resend Inc., USA).
+            E-Mails werden ausschliesslich transaktional versendet, d.&nbsp;h. nur wenn eine konkrete
+            Aktion dies ausloest (z.&nbsp;B. Passwort-Zuruecksetzung, Referral-Gutschrift-Benachrichtigung,
+            automatische Mahnungen). Es werden keine Werbe-E-Mails oder Newsletter versendet.
+          </p>
+          <p>
+            Dabei werden an Resend uebermittelt:
+          </p>
+          <ul>
+            <li>E-Mail-Adresse des Empfaengers</li>
+            <li>E-Mail-Betreff und -Inhalt</li>
+          </ul>
+          <p>
+            E-Mails werden von der Adresse noreply@propgate.de versendet.
+            Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Vertragserfuellung).
+          </p>
+        </section>
+
+        <!-- 13. Dateispeicherung -->
+        <section>
+          <h2>13. Dateispeicherung</h2>
           <h3>Cloudflare R2</h3>
           <p>
-            Hochgeladene Dokumente (z.&nbsp;B. Vertraege, Belege) werden bei Cloudflare R2
-            (Cloudflare Inc., 101 Townsend St, San Francisco, CA 94107, USA) gespeichert.
-            Cloudflare R2 ist ein S3-kompatibler Objektspeicher mit Rechenzentren in der EU.
+            Hochgeladene Dokumente (z.&nbsp;B. Mietvertraege, Rechnungen, Zaehlerfotos) werden bei
+            Cloudflare R2 (Cloudflare Inc., 101 Townsend St, San Francisco, CA 94107, USA) gespeichert.
+            Cloudflare R2 ist ein S3-kompatibler Objektspeicher. Die Dateien werden unter einem
+            mandantenspezifischen Pfad abgelegt, sodass eine Trennung der Dokumente zwischen Kunden
+            gewaehrleistet ist.
+          </p>
+          <p>
+            Erlaubte Dateitypen: PDF, Word (.docx), Excel (.xlsx), JPEG, PNG, WebP, CSV.
+            Maximale Dateigroesse: 10 MB.
           </p>
           <p>
             Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Vertragserfuellung). Cloudflare ist
@@ -247,74 +381,104 @@ import Footer from '../components/Footer.astro';
           </p>
         </section>
 
-        <!-- 12. Datenbank -->
+        <!-- 14. Datenbank -->
         <section>
-          <h2>12. Datenbank</h2>
+          <h2>14. Datenbank</h2>
           <p>
             Die Anwendungsdaten werden in einer PostgreSQL-Datenbank gespeichert, die ueber
-            Vercel Postgres bereitgestellt wird. Die Datenbank befindet sich in EU-Rechenzentren.
+            Vercel bereitgestellt wird. Die Datenbank befindet sich in EU-Rechenzentren (Frankfurt).
             Es gelten die gleichen Datenschutzbestimmungen wie unter Punkt 5 (Hosting) beschrieben.
           </p>
         </section>
 
-        <!-- 13. Auftragsverarbeitung -->
+        <!-- 15. Auftragsverarbeiter -->
         <section>
-          <h2>13. Auftragsverarbeitung</h2>
+          <h2>15. Auftragsverarbeiter</h2>
           <p>
             Wir setzen folgende Auftragsverarbeiter ein:
           </p>
           <ul>
-            <li><strong>Vercel Inc.</strong> &ndash; Hosting und Datenbank (EU-Rechenzentren, DPF-zertifiziert)</li>
-            <li><strong>Stripe Inc. / Stripe Payments Europe, Ltd.</strong> &ndash; Zahlungsabwicklung (DPF-zertifiziert)</li>
-            <li><strong>Cloudflare Inc.</strong> &ndash; Dateispeicherung / CDN (DPF-zertifiziert)</li>
-            <li><strong>Resend Inc.</strong> &ndash; E-Mail-Versand</li>
+            <li><strong>Vercel Inc.</strong> (USA, DPF-zertifiziert) &ndash; Hosting, Serverless Functions, Datenbank (EU-Rechenzentren Frankfurt)</li>
+            <li><strong>Stripe Payments Europe, Ltd.</strong> (Irland) / <strong>Stripe Inc.</strong> (USA, DPF-zertifiziert) &ndash; Zahlungsabwicklung, Abonnementverwaltung</li>
+            <li><strong>Cloudflare Inc.</strong> (USA, DPF-zertifiziert) &ndash; Dateispeicherung (R2), CDN</li>
+            <li><strong>Resend Inc.</strong> (USA) &ndash; Transaktionaler E-Mail-Versand</li>
           </ul>
           <p>
             Mit allen Auftragsverarbeitern wurden entsprechende Vertraege gemaess Art. 28 DSGVO
-            geschlossen. Eine Uebermittlung in Drittlaender erfolgt nur auf Grundlage geeigneter
-            Garantien (EU-US Data Privacy Framework, Standardvertragsklauseln).
+            geschlossen bzw. es gelten deren Standard-Auftragsverarbeitungsbedingungen. Eine
+            Uebermittlung in Drittlaender (USA) erfolgt auf Grundlage des EU-US Data Privacy Framework
+            (Angemessenheitsbeschluss der EU-Kommission vom 10.07.2023) bzw. EU-Standardvertragsklauseln.
           </p>
         </section>
 
-        <!-- 14. Datenlöschung -->
+        <!-- 16. Datenexport -->
         <section>
-          <h2>14. Speicherdauer und Loeschung</h2>
+          <h2>16. Datenexport und Datenuebertragbarkeit</h2>
+          <p>
+            PropGate stellt Administratoren eine Export-Funktion bereit, ueber die saemtliche
+            Mandantendaten (Objekte, Einheiten, Mieter, Vertraege, Zahlungen, Mahnungen, Tickets,
+            Kosten, Zaehler, Kredite, Dokument-Metadaten und Audit-Logs) im JSON-Format
+            heruntergeladen werden koennen.
+          </p>
+          <p>
+            Diese Funktion unterstuetzt Ihr Recht auf Datenuebertragbarkeit (Art. 20 DSGVO) und
+            ermoeglicht Ihnen, Ihre Daten bei Vertragsende vollstaendig zu sichern.
+          </p>
+        </section>
+
+        <!-- 17. Speicherdauer -->
+        <section>
+          <h2>17. Speicherdauer und Loeschung</h2>
           <p>
             Ihre personenbezogenen Daten werden nur so lange gespeichert, wie es fuer die Erfuellung
-            des Vertragszwecks erforderlich ist oder gesetzliche Aufbewahrungsfristen bestehen.
+            des Vertragszwecks erforderlich ist oder gesetzliche Aufbewahrungsfristen bestehen:
           </p>
           <ul>
-            <li><strong>Kontodaten:</strong> Werden nach Kuendigung und Ablauf gesetzlicher Aufbewahrungsfristen geloescht.</li>
-            <li><strong>Rechnungsdaten:</strong> 10 Jahre gemaess steuerrechtlicher Aufbewahrungspflicht (&sect; 147 AO, &sect; 257 HGB).</li>
-            <li><strong>Audit-Logs:</strong> Werden nach Vertragsende und Ablauf gesetzlicher Fristen geloescht.</li>
-            <li><strong>Server-Logs:</strong> Werden nach spaetestens 30 Tagen geloescht.</li>
+            <li><strong>Kontodaten (Name, E-Mail, Passwort-Hash):</strong> Werden nach Kuendigung und Ablauf einer 30-taegigen Nachfrist geloescht, sofern keine gesetzlichen Aufbewahrungspflichten bestehen.</li>
+            <li><strong>Rechnungs- und Zahlungsdaten:</strong> 10 Jahre gemaess steuerrechtlicher Aufbewahrungspflicht (&sect; 147 AO, &sect; 257 HGB).</li>
+            <li><strong>Vertraege und Geschaeftsbriefe:</strong> 6 Jahre gemaess &sect; 257 HGB.</li>
+            <li><strong>Audit-Logs:</strong> Werden nach Vertragsende und Ablauf der relevanten Aufbewahrungsfristen geloescht.</li>
+            <li><strong>Server-Logs (Vercel):</strong> Werden nach spaetestens 30 Tagen geloescht.</li>
+            <li><strong>Passwort-Reset-Token:</strong> Werden nach 1 Stunde oder erfolgreicher Zuruecksetzung geloescht.</li>
+            <li><strong>Fehlgeschlagene Login-Versuche:</strong> Werden nach erfolgreicher Anmeldung zurueckgesetzt.</li>
           </ul>
           <p>
-            Nach Kuendigung Ihres Kontos wechselt dieses zunaechst in einen Read-only-Modus.
-            Sie koennen Ihre Daten als CSV exportieren. Nach Ablauf der Aufbewahrungsfrist werden
-            alle Daten vollstaendig geloescht.
+            Nach Kuendigung Ihres Kontos wechselt dieses zunaechst in einen Nur-Lesen-Modus.
+            Sie koennen Ihre Daten ueber die Export-Funktion herunterladen. Nach Ablauf der gesetzlichen
+            Aufbewahrungsfristen werden alle Daten vollstaendig und unwiderruflich geloescht.
           </p>
         </section>
 
-        <!-- 15. SSL/TLS -->
+        <!-- 18. SSL/TLS -->
         <section>
-          <h2>15. SSL- bzw. TLS-Verschluesselung</h2>
+          <h2>18. SSL- bzw. TLS-Verschluesselung</h2>
           <p>
             Diese Seite nutzt aus Sicherheitsgruenden und zum Schutz der Uebertragung vertraulicher
             Inhalte eine SSL- bzw. TLS-Verschluesselung. Eine verschluesselte Verbindung erkennen Sie
             daran, dass die Adresszeile des Browsers von &bdquo;http://&ldquo; auf &bdquo;https://&ldquo;
-            wechselt und an dem Schloss-Symbol in Ihrer Browserzeile.
+            wechselt und an dem Schloss-Symbol in Ihrer Browserzeile. Wenn die SSL- bzw. TLS-Verschluesselung
+            aktiviert ist, koennen die Daten, die Sie an uns uebermitteln, nicht von Dritten mitgelesen werden.
           </p>
         </section>
 
-        <!-- 16. Aenderungen -->
+        <!-- 19. Kein Tracking -->
         <section>
-          <h2>16. Aenderungen dieser Datenschutzerklaerung</h2>
+          <h2>19. Keine Analyse- und Tracking-Dienste</h2>
+          <p>
+            PropGate setzt <strong>keine</strong> Analyse- oder Tracking-Dienste ein. Es werden keine
+            Dienste wie Google Analytics, Matomo, Hotjar, Facebook Pixel oder vergleichbare Tools verwendet.
+            Wir erfassen keine Nutzungsprofile und geben keine personenbezogenen Daten an Werbenetzwerke weiter.
+          </p>
+        </section>
+
+        <!-- 20. Aenderungen -->
+        <section>
+          <h2>20. Aenderungen dieser Datenschutzerklaerung</h2>
           <p>
             Wir behalten uns vor, diese Datenschutzerklaerung anzupassen, damit sie stets den aktuellen
             rechtlichen Anforderungen entspricht oder um Aenderungen unserer Leistungen in der
-            Datenschutzerklaerung umzusetzen. Fuer Ihren erneuten Besuch gilt dann die neue
-            Datenschutzerklaerung.
+            Datenschutzerklaerung umzusetzen. Wesentliche Aenderungen werden den registrierten Nutzern
+            per E-Mail mitgeteilt. Fuer Ihren erneuten Besuch gilt dann die neue Datenschutzerklaerung.
           </p>
           <p>Stand: Maerz 2026</p>
         </section>
@@ -404,13 +568,10 @@ import Footer from '../components/Footer.astro';
     color: var(--text);
   }
 
-  .legal-notice {
-    border-top: 1px solid var(--border-card);
-    padding-top: 1.5rem;
-  }
-
-  .legal-notice p {
-    font-size: 0.9rem;
-    color: var(--text-subtle);
+  .legal-content code {
+    background: rgba(0, 102, 255, 0.1);
+    padding: 0.125rem 0.375rem;
+    border-radius: 3px;
+    font-size: 0.875rem;
   }
 </style>
